@@ -12,4 +12,16 @@ public class AppConfig
    public static String reasonForChange = "HRG - Automation";
    
    public static String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed', ";
+   public static String excelFileLocation = "E:\\Automation\\Target Rent Data";
+   public static String getBuildingsWithStatusforCurrentDay = "Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit,Status from automation.TargetRent where Source ='ETL' and FoRMAT(completedOn,'MM-dd-yyyy')=FoRMAT(getdate(),'MM-dd-yyyy')";
+   
+   //Mail credentials
+   public static String fromEmail = "bireports@beetlerim.com";
+   public static String fromEmailPassword = "Welcome@123";
+   
+   public static String toEmail = "gopi.v@beetlerim.com";
+   public static String CCEmail = "gopi.v@beetlerim.com";
+   
+   public static String mailSubject = "Target Rent Update for  ";
+   
 }

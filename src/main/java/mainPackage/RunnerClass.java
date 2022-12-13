@@ -1,7 +1,10 @@
 package mainPackage;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.JavascriptExecutor;
@@ -29,6 +32,9 @@ public class RunnerClass
 	public static String failedReason ="";
 	public static ArrayList<String> successBuildings = new ArrayList<String>();
 	public static ArrayList<String> failedBuildings = new ArrayList<String>();;
+	public static String[][] completedBuildingList;
+	public static String currentDate = "";
+	public static HashMap<String,String> failedReaonsList= new HashMap<String,String>();
 	public static void main(String[] args) throws Exception
 	{
 		//Get Pending Buildings from DataBase
@@ -65,16 +71,34 @@ public class RunnerClass
 				}
 				if(failedBuildings.size()>0)
 				{
-		    	String updateFailedStatus = "update automation.TargetRent Set Status ='Failed', completedOn = getdate(),Notes='"+failedReason+"' where [Building/Unit Abbreviation] =("+failed+")";
-		    	GetDatafromDatabase.updateTable(updateFailedStatus);
+				String failedReasons = String.join(",",failedReaonsList.values());
+				String failedBuildings = String.join(",",failedReaonsList.keySet());
+				String failedBuildingsUpdateQuery = "";
+				for(int i=0;i<failedReaonsList.size();i++)
+				{
+					String buildingAbbr = failedBuildings.split(",")[i].trim();
+					String failedReason = failedReasons.split(",")[i].trim();
+					failedBuildingsUpdateQuery =failedBuildingsUpdateQuery+"\nupdate automation.TargetRent Set Status ='Failed', completedOn = getdate(),Notes='"+failedReason+"' where [Building/Unit Abbreviation] ='"+buildingAbbr+"'";
+					
+				}
+		    	//String updateFailedStatus = "update automation.TargetRent Set Status ='Failed', completedOn = getdate(),Notes='"+failedReason+"' where [Building/Unit Abbreviation] in ("+failed+")";
+		    	GetDatafromDatabase.updateTable(failedBuildingsUpdateQuery);
 				}
 			}
 			catch(Exception e) {}
+			
+			//Send Email with status attachment
+			if(pendingBuildingList.length>0)
+			CommonMethods.createExcelFileWithProcessedData();
+			
 		}
 	}
 
 	public static boolean runAutomation(String company,String building,String targetRent, String targetDeposit) throws Exception
 	{
+		LocalDate dateObj = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        currentDate = dateObj.format(formatter);
 		//Open Browser
 		if(CommonMethods.openBrowser()==false)
 		return false;
