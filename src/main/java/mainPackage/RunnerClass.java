@@ -41,7 +41,9 @@ public class RunnerClass
 		boolean getBuildings =  GetDatafromDatabase.getBuildingsList();
 		if(getBuildings==true)
 		{
-			saveButtonOnAndOff = false;
+			saveButtonOnAndOff = true;
+			try
+			{
 			for(int i=0;i<pendingBuildingList.length;i++)
 			{
 				updateStatus=0;
@@ -59,14 +61,16 @@ public class RunnerClass
 			    	failedBuildings.add("'"+building+"'");
 			    }
 			    driver.close();
+			 }
 			}
+			catch(Exception e) {}
 			String success = String.join(",",successBuildings);
 			String failed = String.join(",",failedBuildings);
 			try
 			{
 				if(successBuildings.size()>0)
 				{
-				String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed', completedOn = getdate() where [Building/Unit Abbreviation] in ("+success+")";
+				String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate() where [Building/Unit Abbreviation] in ("+success+")";
 		    	GetDatafromDatabase.updateTable(updateSuccessStatus);
 				}
 				if(failedBuildings.size()>0)
@@ -78,7 +82,7 @@ public class RunnerClass
 				{
 					String buildingAbbr = failedBuildings.split(",")[i].trim();
 					String failedReason = failedReasons.split(",")[i].trim();
-					failedBuildingsUpdateQuery =failedBuildingsUpdateQuery+"\nupdate automation.TargetRent Set Status ='Failed', completedOn = getdate(),Notes='"+failedReason+"' where [Building/Unit Abbreviation] ='"+buildingAbbr+"'";
+					failedBuildingsUpdateQuery =failedBuildingsUpdateQuery+"\nupdate automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='"+failedReason+"' where [Building/Unit Abbreviation] ='"+buildingAbbr+"'";
 					
 				}
 		    	//String updateFailedStatus = "update automation.TargetRent Set Status ='Failed', completedOn = getdate(),Notes='"+failedReason+"' where [Building/Unit Abbreviation] in ("+failed+")";

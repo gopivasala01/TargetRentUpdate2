@@ -101,7 +101,7 @@ public class GetDatafromDatabase
 		            	rs.beforeFirst();
 		            }
 		            System.out.println("No of buildings with status = "+rows);
-		            RunnerClass.completedBuildingList = new String[rows][5];
+		            RunnerClass.completedBuildingList = new String[rows][6];
 		           int  i=0;
 		            while(rs.next())
 		            {
@@ -111,7 +111,8 @@ public class GetDatafromDatabase
 		                String  targetRent = (String) rs.getObject(3);
 		                String  targetDeposit = (String) rs.getObject(4);
 		                String  status = (String) rs.getObject(5);
-		                System.out.println(company +" ----  "+buildingAbbreviation+" ---- "+targetRent+" ---- "+targetDeposit+" ---- "+status);
+		                String  notes = (String) rs.getObject(6);
+		                System.out.println(company +" ----  "+buildingAbbreviation+" ---- "+targetRent+" ---- "+targetDeposit+" ---- "+status+" ---- "+notes);
 		    				//Company
 		    				RunnerClass.completedBuildingList[i][0] = company;
 		    				//Port folio
@@ -122,9 +123,11 @@ public class GetDatafromDatabase
 		    				RunnerClass.completedBuildingList[i][3] = targetDeposit;
 		    				//Status
 		    				RunnerClass.completedBuildingList[i][4] = status;
+		    				//Notes
+		    				RunnerClass.completedBuildingList[i][5] = notes;
 		    				i++;
 		            }	
-		            System.out.println("Total Pending Buildings  = " +RunnerClass.pendingBuildingList.length);
+		           // System.out.println("Total Pending Buildings  = " +RunnerClass.pendingBuildingList.length);
 		            //for(int j=0;j<RunnerClass.pendingBuildingList.length;j++)
 		            //{
 		            //	System.out.println(RunnerClass.pendingBuildingList[j][j]);

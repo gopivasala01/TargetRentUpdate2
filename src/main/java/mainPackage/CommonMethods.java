@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -179,17 +180,25 @@ public class CommonMethods
 		boolean targetDepositUpdateCheck = false;
 		try
 		{
-		RunnerClass.driver.findElement(Locators.targetRentChangeButton).click();
-		Thread.sleep(2000);
-		RunnerClass.driver.findElement(Locators.newTargetRent).sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
-		//RunnerClass.actions.click(RunnerClass.driver.findElement(Locators.newTargetRent)).sendKeys(Keys.END).sendKeys(Keys.SHIFT).sendKeys(Keys.HOME).sendKeys(Keys.BACK_SPACE).build().perform();
-		RunnerClass.driver.findElement(Locators.newTargetRent).sendKeys(targetRent);
-		RunnerClass.driver.findElement(Locators.reasonForChange).sendKeys(AppConfig.reasonForChange);
-		if(RunnerClass.saveButtonOnAndOff==true)
-			RunnerClass.driver.findElement(Locators.targetRentSaveButton).click();
-		else 
-			RunnerClass.driver.findElement(Locators.targetRentCancelButton).click();
-		targetRentUpdateCheck = true;
+			RunnerClass.driver.findElement(Locators.targetRentChangeButton).click();
+			Thread.sleep(2000);
+			try
+			{
+			RunnerClass.driver.findElement(Locators.newTargetRent).sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
+			RunnerClass.driver.findElement(Locators.newTargetRent).sendKeys(targetRent);
+			}
+			catch(ElementNotInteractableException e)
+			{
+				RunnerClass.driver.findElement(Locators.newTargetRent2).sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
+				RunnerClass.driver.findElement(Locators.newTargetRent2).sendKeys(targetRent);
+			}
+			//RunnerClass.actions.click(RunnerClass.driver.findElement(Locators.newTargetRent)).sendKeys(Keys.END).sendKeys(Keys.SHIFT).sendKeys(Keys.HOME).sendKeys(Keys.BACK_SPACE).build().perform();
+			RunnerClass.driver.findElement(Locators.reasonForChange).sendKeys(AppConfig.reasonForChange);
+			if(RunnerClass.saveButtonOnAndOff==true)
+				RunnerClass.driver.findElement(Locators.targetRentSaveButton).click();
+			else 
+				RunnerClass.driver.findElement(Locators.targetRentCancelButton).click();
+			targetRentUpdateCheck = true;
 		}
 		catch(Exception e)
 		{
@@ -268,6 +277,7 @@ public class CommonMethods
 		header.createCell(2).setCellValue("Target Rent");
 		header.createCell(3).setCellValue("Target Deposit");
 		header.createCell(4).setCellValue("Status");
+		header.createCell(5).setCellValue("Failed Notes");
 		//int totalCurrentDayBuildings = RunnerClass.successBuildings.size()+RunnerClass.failedBuildings.size();
 		//sheet1.createRow(sheet1.getLastRowNum()+totalCurrentDayBuildings);
 		boolean getBuildings =  GetDatafromDatabase.getCompletedBuildingsList();
@@ -280,12 +290,14 @@ public class CommonMethods
 				String targetRent = RunnerClass.completedBuildingList[i][2];
 				String targetDeposit = RunnerClass.completedBuildingList[i][3];
 				String status = RunnerClass.completedBuildingList[i][4];
+				String notes = RunnerClass.completedBuildingList[i][5];
 				Row row = sheet1.createRow(1+i);
 				row.createCell(0).setCellValue(company);
 				row.createCell(1).setCellValue(building);
 				row.createCell(2).setCellValue(targetRent);
 				row.createCell(3).setCellValue(targetDeposit);
 				row.createCell(4).setCellValue(status);
+				row.createCell(5).setCellValue(notes);
 				
 			}
 		

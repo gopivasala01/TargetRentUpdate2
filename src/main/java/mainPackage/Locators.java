@@ -15,6 +15,7 @@ public class Locators
 	public static By selectSearchedLease = By.partialLinkText(RunnerClass.building);
 	public static By targetRentChangeButton = By.name("ChangeTargetRent");
 	public static By newTargetRent = By.xpath("//*[text()='New Target Rent']/following::input[1]");
+	public static By newTargetRent2 = By.name("targetRentChange.newTargetRentAsString");
 	public static By reasonForChange = By.xpath("//*[text()='Reason For Change']/following::textarea[1]");
 	public static By targetRentSaveButton = By.id("saveTargetRentChange");
 	public static By targetRentCancelButton = By.id("cancelTargetRentChange");
