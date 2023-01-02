@@ -62,7 +62,7 @@ public class RunnerClass
         currentDate = dateObj.format(formatter);
 		if(getBuildings==true)
 		{
-			saveButtonOnAndOff = false;
+			saveButtonOnAndOff = true;
 			try
 			{
 			for(int i=0;i<pendingBuildingList.length;i++)
