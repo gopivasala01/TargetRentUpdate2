@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 public class GetDatafromDatabase 
 {
@@ -144,4 +145,124 @@ public class GetDatafromDatabase
 		}
 	}
 	
+	public static boolean getStatusFromFactTables()
+	{
+		try
+		{
+		        Connection con = null;
+		        Statement stmt = null;
+		        ResultSet rs = null;
+		            //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		            con = DriverManager.getConnection(AppConfig.connectionUrl);
+		            String SQL = AppConfig.statusListFromFactTables;
+		            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		           // stmt = con.createStatement();
+		            rs = stmt.executeQuery(SQL);
+		            int rows =0;
+		            if (rs.last()) {
+		            	rows = rs.getRow();
+		            	// Move to beginning
+		            	rs.beforeFirst();
+		            }
+		            System.out.println("No of Statuses with N = "+rows);
+		            RunnerClass.statusList = new String[rows];
+		           int  i=0;
+		            while(rs.next())
+		            {
+		            	
+		            	String 	status =  (String) rs.getObject(1);
+		    				//Status
+		    				RunnerClass.statusList[i] = status;
+		    				i++;
+		            }	
+		            rs.close();
+		            stmt.close();
+		            con.close();
+		 return true;
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+		 return false;
+		}
+	}
+	public static List<String> getBuildingStatus(String query,String table)
+	{
+		String status="";
+		try
+		{
+		        Connection con = null;
+		        Statement stmt = null;
+		        ResultSet rs = null;
+		            //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		            con = DriverManager.getConnection(AppConfig.connectionUrl);
+		            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		           // stmt = con.createStatement();
+		            rs = stmt.executeQuery(query);
+		            int rows =0;
+		            if (rs.last()) {
+		            	rows = rs.getRow();
+		            	// Move to beginning
+		            	rs.beforeFirst();
+		            }
+		            System.out.println("No of Statuses with N = "+rows);
+		            while(rs.next())
+		            {
+		            	if(table=="Lease")
+		            	RunnerClass.leaseStatuses.add((String) rs.getObject(1));
+		            	if(table=="UW")
+		            	RunnerClass.UWStatuses.add((String) rs.getObject(1));
+		            }
+		           // else status="";
+		            rs.close();
+		            stmt.close();
+		            con.close();
+		            if(table=="Lease")
+		            return RunnerClass.leaseStatuses;
+		            else return RunnerClass.UWStatuses;
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+		 return null;
+		}
+	}
+	
+	public static int getDateDifference(String query)
+	{
+		int status=0;
+		try
+		{
+		        Connection con = null;
+		        Statement stmt = null;
+		        ResultSet rs = null;
+		            //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		            con = DriverManager.getConnection(AppConfig.connectionUrl);
+		            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		           // stmt = con.createStatement();
+		            rs = stmt.executeQuery(query);
+		            int rows =0;
+		            if (rs.last()) {
+		            	rows = rs.getRow();
+		            	// Move to beginning
+		            	rs.beforeFirst();
+		            }
+		            System.out.println("No of Statuses with N = "+rows);
+		            while(rs.next())
+		            {
+		            	
+		            	status =  (Integer) rs.getObject(1);
+		            }
+		           // else status="";
+		            rs.close();
+		            stmt.close();
+		            con.close();
+		            return status;
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+		 return 0;
+		}
+	}
 }

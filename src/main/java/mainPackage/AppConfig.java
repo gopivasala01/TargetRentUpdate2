@@ -24,4 +24,5 @@ public class AppConfig
    
    public static String mailSubject = "Target Rent Update for  ";
    
+   public static String statusListFromFactTables = "Select Status from TargetRentStatusConsideration Where [Y/N]='N'";
 }

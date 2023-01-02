@@ -2,9 +2,12 @@ package mainPackage;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -176,6 +179,26 @@ public class CommonMethods
 	}
 	public static boolean enterTargetsInBuilding(String targetRent,String targetDeposit) throws Exception
 	{
+		Thread.sleep(5000);
+		//Check if the Portfolio is MCH
+		String portfolioType="";
+		try
+		{
+			portfolioType = RunnerClass.driver.findElement(Locators.portfolioType).getText();
+			System.out.println("Portfolio Type = "+portfolioType);
+			if(!portfolioType.contains("MCH"))
+			{
+				System.out.println("Portfolio is not MCH");
+				RunnerClass.failedReaonsList.put(RunnerClass.building, "Portfolio is not MCH");
+				RunnerClass.failedReason = "Portfolio is not MCH";
+				RunnerClass.updateStatus=1;
+				return false;
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		boolean targetRentUpdateCheck = false;
 		boolean targetDepositUpdateCheck = false;
 		try
@@ -422,5 +445,95 @@ public class CommonMethods
 	      }
 	   }
 	
+	public static boolean checkForBuildingStatusInFactTables(String company, String buildingAbbreviation) throws Exception
+	{
+		String leaseFactQuery = "Select  Status from LeaseFact_Dashboard where BuildingAbbreviation like '%"+buildingAbbreviation+"%'";// and Company ='%"+company+"%'
+		String UWFactQuery = "Select Status from Underwriting_Max_Table where BuildingAbbreviation like '%"+buildingAbbreviation+"%'"; // and CompanyName ='"+company+"'
+		boolean checkLeaseStatus =false;
+		boolean checkUWStatus =false;
+		List<String> buildingStatusFromLeaseFact = GetDatafromDatabase.getBuildingStatus(leaseFactQuery,"Lease");
+		List<String>  buildingStatusFromUWFact = GetDatafromDatabase.getBuildingStatus(UWFactQuery,"UW");
+		 if(buildingStatusFromLeaseFact==null&&buildingStatusFromUWFact==null)
+		 {
+			 System.out.println(buildingAbbreviation +" - Building is not available in both Lease and UW tables");
+			 return true;
+		 }
+		 String leaseMatchedStatus ="";
+		 String UWMatchedStatus ="";
+		 for(int i=0;i<buildingStatusFromLeaseFact.size();i++)
+		 {
+			 String statusFromLeaseTable = buildingStatusFromLeaseFact.get(i);
+			 for(int j=0;j<RunnerClass.statusList.length;j++)
+			 {
+				 String statusFromExcel = RunnerClass.statusList[j];
+			 if(statusFromExcel.equalsIgnoreCase(statusFromLeaseTable))
+			 {
+				// String dateQuery = "Select top 1 Format(EndDate,'dd MM yyyy') from LeaseFact_Dashboard where BuildingAbbreviation like '%"+buildingAbbreviation+"%'"; // and Company ='%"+company+"%'
+				 try
+				 {
+				 String daysDifference = "Select top 1 DATEDIFF(DAY,EndDate,Format(getdate(),'yyyy-MM-dd')) from LeaseFact_Dashboard where BuildingAbbreviation like '%"+buildingAbbreviation+"%' and Status ='"+statusFromLeaseTable+"'";
+				 int diff = GetDatafromDatabase.getDateDifference(daysDifference);
+				 if(diff<0)
+					return true;
+				 else
+				 {
+					 checkLeaseStatus = true;
+					 leaseMatchedStatus = statusFromExcel;
+				 }
+				 }
+				 catch(Exception e) 
+				 {
+					 e.printStackTrace();
+			     }
+			 }
+			 }
+		 }
+		 for(int i=0;i<buildingStatusFromUWFact.size();i++)
+		 {
+			 String statusFromUWTable = buildingStatusFromUWFact.get(i);
+			 for(int j=0;j<RunnerClass.statusList.length;j++)
+			 {
+				 String statusFromExcel = RunnerClass.statusList[j];
+			 if(statusFromExcel.equalsIgnoreCase(statusFromUWTable))
+			 {
+				 try
+				 {
+				 String daysDifference = "Select top 1 DATEDIFF(DAY,CreatedDate,Format(getdate(),'yyyy-MM-dd')) from Underwriting_Max_Table where BuildingAbbreviation like '%"+buildingAbbreviation+"%' and Status ='"+statusFromUWTable+"'";
+				 //checkStatus = true;
+				 int diff = GetDatafromDatabase.getDateDifference(daysDifference);
+				 if(diff<60)
+					return true;
+				 else 
+				 {
+					 checkUWStatus = true;
+					 UWMatchedStatus = statusFromExcel;
+				 }
+				 }
+				 catch(Exception e) 
+				 {
+					 e.printStackTrace();
+			     }
+			 
+			 }
+			 }
+		 }
+		 if(checkLeaseStatus == true && checkUWStatus ==true)
+		 {
+		 RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Lease with Status of "+leaseMatchedStatus+" and Application with a status of "+UWMatchedStatus);
+		 return false;
+		 }
+		 if(checkLeaseStatus == true)
+		 {
+		 RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Lease with Status of "+leaseMatchedStatus);
+		 return false;
+		 }
+		 if(checkUWStatus == true)
+		 {
+		 RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Application with a status of "+UWMatchedStatus);
+		 return false;
+		 }
+		 return true;
+	 
+	}
 
 }

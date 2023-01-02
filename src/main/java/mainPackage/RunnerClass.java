@@ -1,12 +1,26 @@
 package mainPackage;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -33,15 +47,22 @@ public class RunnerClass
 	public static ArrayList<String> successBuildings = new ArrayList<String>();
 	public static ArrayList<String> failedBuildings = new ArrayList<String>();;
 	public static String[][] completedBuildingList;
+	public static String [] statusList;
 	public static String currentDate = "";
 	public static HashMap<String,String> failedReaonsList= new HashMap<String,String>();
+	public static List<String> leaseStatuses = new ArrayList<String>();
+	public static List<String> UWStatuses = new ArrayList<String>();
 	public static void main(String[] args) throws Exception
 	{
 		//Get Pending Buildings from DataBase
 		boolean getBuildings =  GetDatafromDatabase.getBuildingsList();
+		GetDatafromDatabase.getStatusFromFactTables();
+		LocalDate dateObj = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        currentDate = dateObj.format(formatter);
 		if(getBuildings==true)
 		{
-			saveButtonOnAndOff = true;
+			saveButtonOnAndOff = false;
 			try
 			{
 			for(int i=0;i<pendingBuildingList.length;i++)
@@ -51,7 +72,14 @@ public class RunnerClass
 				building = pendingBuildingList[i][1].trim();
 				targetRent = pendingBuildingList[i][2];
 				targetDeposit = pendingBuildingList[i][3];
-			    RunnerClass.runAutomation(company,building,targetRent,targetDeposit);
+				if(CommonMethods.checkForBuildingStatusInFactTables(company, building)==true)
+			    //continue;
+				RunnerClass.runAutomation(company,building,targetRent,targetDeposit);
+				else
+				{
+					updateStatus=1;
+					
+				}
 			    if(updateStatus==0)
 			    {
 			    	successBuildings.add("'"+building+"'");
@@ -100,9 +128,6 @@ public class RunnerClass
 
 	public static boolean runAutomation(String company,String building,String targetRent, String targetDeposit) throws Exception
 	{
-		LocalDate dateObj = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-        currentDate = dateObj.format(formatter);
 		//Open Browser
 		if(CommonMethods.openBrowser()==false)
 		return false;
@@ -115,4 +140,24 @@ public class RunnerClass
 		
 		return true;
 	}
+	
+	public static long dateDifferenceInDays(String date1, String date2)
+	{
+		SimpleDateFormat myFormat = new SimpleDateFormat("dd MM yyyy");
+
+		try {
+		    Date date_1 = myFormat.parse(date1);
+		    Date date_2 = myFormat.parse(date2);
+		    long diff = date_2.getTime() - date_1.getTime();
+		    System.out.println ("Days: " + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS));
+		    long days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+		    return days;
+		} 
+		catch (ParseException e) 
+		{
+		    e.printStackTrace();
+		}
+		return 0;
+	}
+	
 }
