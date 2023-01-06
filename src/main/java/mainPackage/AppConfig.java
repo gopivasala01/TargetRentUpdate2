@@ -19,7 +19,7 @@ public class AppConfig
    public static String fromEmail = "bireports@beetlerim.com";
    public static String fromEmailPassword = "Welcome@123";
    
-   public static String toEmail = "amesa@homeriver.com";
+   public static String toEmail = "msanfilippo@homeriver.com";
    public static String CCEmail = "gopi.v@beetlerim.com";
    
    public static String mailSubject = "Target Rent Update for  ";

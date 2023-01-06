@@ -186,7 +186,7 @@ public class GetDatafromDatabase
 		 return false;
 		}
 	}
-	public static List<String> getBuildingStatus(String query,String table)
+	public static void getBuildingStatus(String query,String table)
 	{
 		String status="";
 		try
@@ -206,25 +206,48 @@ public class GetDatafromDatabase
 		            	rs.beforeFirst();
 		            }
 		            System.out.println("No of Statuses with N = "+rows);
+		            if(table=="Lease")
+		            RunnerClass.leaseStatuses = new String[rows][2];
+		            else RunnerClass.UWStatuses = new String[rows][2];
+		            int i=0;
 		            while(rs.next())
 		            {
 		            	if(table=="Lease")
-		            	RunnerClass.leaseStatuses.add((String) rs.getObject(1));
+		            	{
+		            	String ID = rs.getObject(1).toString();
+		            	String Status = (String) rs.getObject(2);
+		            	//LeaseID
+	    				RunnerClass.leaseStatuses[i][0] = ID;
+	    				//Lease Status
+	    				RunnerClass.leaseStatuses[i][1] = Status;
+	    				
+		            	}
 		            	if(table=="UW")
-		            	RunnerClass.UWStatuses.add((String) rs.getObject(1));
+		            	{
+		            		String ID =  rs.getObject(1).toString();
+			            	String Status = (String) rs.getObject(2);
+			            	//UW ID
+		    				RunnerClass.UWStatuses[i][0] = ID;
+		    				//UW Status
+		    				RunnerClass.UWStatuses[i][1] = Status;
+		            	
+		            	}
+		            	i++;
 		            }
 		           // else status="";
 		            rs.close();
 		            stmt.close();
 		            con.close();
+		            /*
 		            if(table=="Lease")
 		            return RunnerClass.leaseStatuses;
 		            else return RunnerClass.UWStatuses;
+		            */
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
-		 return null;
+		// return null;
 		}
 	}
 	

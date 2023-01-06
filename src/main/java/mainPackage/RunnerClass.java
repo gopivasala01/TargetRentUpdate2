@@ -45,13 +45,13 @@ public class RunnerClass
 	public static int updateStatus;
 	public static String failedReason ="";
 	public static ArrayList<String> successBuildings = new ArrayList<String>();
-	public static ArrayList<String> failedBuildings = new ArrayList<String>();;
+	public static ArrayList<String> failedBuildings = new ArrayList<String>();
 	public static String[][] completedBuildingList;
 	public static String [] statusList;
 	public static String currentDate = "";
 	public static HashMap<String,String> failedReaonsList= new HashMap<String,String>();
-	public static List<String> leaseStatuses = new ArrayList<String>();
-	public static List<String> UWStatuses = new ArrayList<String>();
+	public static String leaseStatuses[][];
+	public static String UWStatuses[][];
 	public static void main(String[] args) throws Exception
 	{
 		//Get Pending Buildings from DataBase
@@ -78,7 +78,6 @@ public class RunnerClass
 				else
 				{
 					updateStatus=1;
-					
 				}
 			    if(updateStatus==0)
 			    {
@@ -88,7 +87,8 @@ public class RunnerClass
 			    {
 			    	failedBuildings.add("'"+building+"'");
 			    }
-			    driver.close();
+                try {
+			    driver.close();}catch(Exception e) {}
 			 }
 			}
 			catch(Exception e) {}

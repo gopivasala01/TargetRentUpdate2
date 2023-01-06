@@ -447,22 +447,27 @@ public class CommonMethods
 	
 	public static boolean checkForBuildingStatusInFactTables(String company, String buildingAbbreviation) throws Exception
 	{
-		String leaseFactQuery = "Select  Status from LeaseFact_Dashboard where BuildingAbbreviation like '%"+buildingAbbreviation+"%'";// and Company ='%"+company+"%'
-		String UWFactQuery = "Select Status from Underwriting_Max_Table where BuildingAbbreviation like '%"+buildingAbbreviation+"%'"; // and CompanyName ='"+company+"'
+		String leaseFactQuery = "Select  ID,Status from LeaseFact_Dashboard where BuildingAbbreviation like '%"+buildingAbbreviation+"%'";// and Company ='%"+company+"%'
+		String UWFactQuery = "Select ID, Status from Underwriting_Max_Table where BuildingAbbreviation like '%"+buildingAbbreviation+"%'"; // and CompanyName ='"+company+"'
 		boolean checkLeaseStatus =false;
 		boolean checkUWStatus =false;
-		List<String> buildingStatusFromLeaseFact = GetDatafromDatabase.getBuildingStatus(leaseFactQuery,"Lease");
-		List<String>  buildingStatusFromUWFact = GetDatafromDatabase.getBuildingStatus(UWFactQuery,"UW");
-		 if(buildingStatusFromLeaseFact==null&&buildingStatusFromUWFact==null)
+		//List<String> buildingStatusFromLeaseFact = GetDatafromDatabase.getBuildingStatus(leaseFactQuery,"Lease");
+		GetDatafromDatabase.getBuildingStatus(leaseFactQuery,"Lease");
+		//List<String>  buildingStatusFromUWFact = GetDatafromDatabase.getBuildingStatus(UWFactQuery,"UW");
+		GetDatafromDatabase.getBuildingStatus(UWFactQuery,"UW");
+		 if(RunnerClass.leaseStatuses==null&&RunnerClass.UWStatuses==null)
 		 {
 			 System.out.println(buildingAbbreviation +" - Building is not available in both Lease and UW tables");
 			 return true;
 		 }
 		 String leaseMatchedStatus ="";
 		 String UWMatchedStatus ="";
-		 for(int i=0;i<buildingStatusFromLeaseFact.size();i++)
+		 try
 		 {
-			 String statusFromLeaseTable = buildingStatusFromLeaseFact.get(i);
+		 for(int i=0;i<RunnerClass.leaseStatuses.length;i++)
+		 {
+			 String statusFromLeaseTable = RunnerClass.leaseStatuses[i][1];
+			 String leaseID = RunnerClass.leaseStatuses[i][0];
 			 for(int j=0;j<RunnerClass.statusList.length;j++)
 			 {
 				 String statusFromExcel = RunnerClass.statusList[j];
@@ -471,7 +476,7 @@ public class CommonMethods
 				// String dateQuery = "Select top 1 Format(EndDate,'dd MM yyyy') from LeaseFact_Dashboard where BuildingAbbreviation like '%"+buildingAbbreviation+"%'"; // and Company ='%"+company+"%'
 				 try
 				 {
-				 String daysDifference = "Select top 1 DATEDIFF(DAY,EndDate,Format(getdate(),'yyyy-MM-dd')) from LeaseFact_Dashboard where BuildingAbbreviation like '%"+buildingAbbreviation+"%' and Status ='"+statusFromLeaseTable+"'";
+				 String daysDifference = "Select DATEDIFF(DAY,EndDate,Format(getdate(),'yyyy-MM-dd')) from LeaseFact_Dashboard where BuildingAbbreviation like '%"+buildingAbbreviation+"%' and ID ='"+leaseID+"'";
 				 int diff = GetDatafromDatabase.getDateDifference(daysDifference);
 				 if(diff<0)
 					return true;
@@ -479,6 +484,7 @@ public class CommonMethods
 				 {
 					 checkLeaseStatus = true;
 					 leaseMatchedStatus = statusFromExcel;
+					 break;
 				 }
 				 }
 				 catch(Exception e) 
@@ -488,9 +494,14 @@ public class CommonMethods
 			 }
 			 }
 		 }
-		 for(int i=0;i<buildingStatusFromUWFact.size();i++)
+		 }
+		 catch(Exception e) {checkLeaseStatus = false;}
+		 try
 		 {
-			 String statusFromUWTable = buildingStatusFromUWFact.get(i);
+		 for(int i=0;i<RunnerClass.UWStatuses.length;i++)
+		 {
+			 String statusFromUWTable = RunnerClass.UWStatuses[i][1];
+			 String uwID = RunnerClass.UWStatuses[i][0];
 			 for(int j=0;j<RunnerClass.statusList.length;j++)
 			 {
 				 String statusFromExcel = RunnerClass.statusList[j];
@@ -498,7 +509,7 @@ public class CommonMethods
 			 {
 				 try
 				 {
-				 String daysDifference = "Select top 1 DATEDIFF(DAY,CreatedDate,Format(getdate(),'yyyy-MM-dd')) from Underwriting_Max_Table where BuildingAbbreviation like '%"+buildingAbbreviation+"%' and Status ='"+statusFromUWTable+"'";
+				 String daysDifference = "Select  DATEDIFF(DAY,CreatedDate,Format(getdate(),'yyyy-MM-dd')) from Underwriting_Max_Table where BuildingAbbreviation like '%"+buildingAbbreviation+"%' and ID ='"+uwID+"'";
 				 //checkStatus = true;
 				 int diff = GetDatafromDatabase.getDateDifference(daysDifference);
 				 if(diff<60)
@@ -507,6 +518,7 @@ public class CommonMethods
 				 {
 					 checkUWStatus = true;
 					 UWMatchedStatus = statusFromExcel;
+					 break;
 				 }
 				 }
 				 catch(Exception e) 
@@ -517,6 +529,8 @@ public class CommonMethods
 			 }
 			 }
 		 }
+		 }
+		 catch(Exception e) {checkUWStatus = false; }
 		 if(checkLeaseStatus == true && checkUWStatus ==true)
 		 {
 		 RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Lease with Status of "+leaseMatchedStatus+" and Application with a status of "+UWMatchedStatus);
@@ -530,6 +544,11 @@ public class CommonMethods
 		 if(checkUWStatus == true)
 		 {
 		 RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Application with a status of "+UWMatchedStatus);
+		 return false;
+		 }
+		 if(checkLeaseStatus == false && checkUWStatus ==false)
+		 {
+		 RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Could not fetch Lease and Application Statuses");
 		 return false;
 		 }
 		 return true;
