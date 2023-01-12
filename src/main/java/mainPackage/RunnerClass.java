@@ -62,7 +62,7 @@ public class RunnerClass
         currentDate = dateObj.format(formatter);
 		if(getBuildings==true)
 		{
-			saveButtonOnAndOff = true;
+			saveButtonOnAndOff = false;
 			try
 			{
 			for(int i=0;i<pendingBuildingList.length;i++)
@@ -89,6 +89,7 @@ public class RunnerClass
 			    }
                 try {
 			    driver.close();}catch(Exception e) {}
+                System.out.println("Record = "+i);
 			 }
 			}
 			catch(Exception e) {}
