@@ -25,4 +25,8 @@ public class Locators
 	public static By cancelButton = By.xpath("(//*[@value='Cancel'])[1]");
 	public static By noItemsFound = By.xpath("//*[text()='No Items Found']");
 	public static By portfolioType =By.xpath("//*[text()='Attached Portfolio']/following::td[1]/a");
+	public static By checkPortfolioType = By.xpath("//*[@title='Click to jump to portfolio']");
+	
+	public static By published = By.xpath("//*[contains(text(),'Published Rental')]/following::td[1]");
+    public static By listingAgent = By.xpath("//*[contains(text(),'Listing Agent [Name/Phone/Email]')]/following::td[1]");
 }

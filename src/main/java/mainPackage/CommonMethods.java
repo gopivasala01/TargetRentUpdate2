@@ -179,6 +179,41 @@ public class CommonMethods
 	}
 	public static boolean enterTargetsInBuilding(String targetRent,String targetDeposit) throws Exception
 	{
+		
+		RunnerClass.published =true;
+		RunnerClass.listingAgent = true;
+		//Check if Unit is published or not
+		try
+		{
+		String published = RunnerClass.driver.findElement(Locators.published).getText();
+		if(!published.trim().toLowerCase().equals("yes"))
+		{
+			RunnerClass.published =false;
+			System.out.println("Unit is not Published");
+			//RunnerClass.failedReaonsList.put(building, "Not a Published Unit");
+		    RunnerClass.failedReason = "Unit is not Published";
+			RunnerClass.updateStatus=1;
+			return false;
+		}
+		}
+		catch(Exception e) {}
+		
+		//Check Listing Agent Type
+		try
+		{
+		String listingAgent = RunnerClass.driver.findElement(Locators.listingAgent).getText();
+		if(listingAgent.trim().toLowerCase().contains("Sovereign".toLowerCase())&&listingAgent.trim().toLowerCase().contains("MCH".toLowerCase()))
+		{
+			RunnerClass.listingAgent =false;
+			System.out.println("Unit marketed by Sovereign");
+			//RunnerClass.failedReaonsList.put(building, "Unit marketed by Sovereign");
+		    RunnerClass.failedReason = "Unit marketed by Sovereign";
+			RunnerClass.updateStatus=1;
+			return false;
+		}
+		}
+		catch(Exception e) {}
+		
 		Thread.sleep(5000);
 		//Check if the Portfolio is MCH
 		String portfolioType="";
@@ -370,18 +405,22 @@ public class CommonMethods
 	         // Set From: header field of the header.
 	         message.setFrom(new InternetAddress(AppConfig.fromEmail));
 
+	         InternetAddress[] toAddresses = InternetAddress.parse(AppConfig.toEmail);
 	         // Set To: header field of the header.
 	        message.setRecipients(Message.RecipientType.TO,
-	           InternetAddress.parse(AppConfig.toEmail));
+	        		toAddresses);
 
+	        
+	        InternetAddress[] CCAddresses = InternetAddress.parse(AppConfig.CCEmail);
 	         // Set CC: header field of the header.
 	         message.setRecipients(Message.RecipientType.CC,
-	            InternetAddress.parse(AppConfig.CCEmail));
+	        		 CCAddresses);
 	         
+	         /*
 	         // Set CC: header field of the header.
 	         message.setRecipients(Message.RecipientType.BCC,
 	            InternetAddress.parse("sujana.t@beetlerim.com"));
-	         
+	         */
 	         // Set Subject: header field
 	        String subject = AppConfig.mailSubject+RunnerClass.currentDate;
 	        message.setSubject(subject);
@@ -512,7 +551,7 @@ public class CommonMethods
 				 String daysDifference = "Select  DATEDIFF(DAY,CreatedDate,Format(getdate(),'yyyy-MM-dd')) from Underwriting_Max_Table where BuildingAbbreviation like '%"+buildingAbbreviation+"%' and ID ='"+uwID+"'";
 				 //checkStatus = true;
 				 int diff = GetDatafromDatabase.getDateDifference(daysDifference);
-				 if(diff<60)
+				 if(diff>60)
 					return true;
 				 else 
 				 {
@@ -548,8 +587,8 @@ public class CommonMethods
 		 }
 		 if(checkLeaseStatus == false && checkUWStatus ==false)
 		 {
-		 RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Could not fetch Lease and Application Statuses");
-		 return false;
+		// RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Could not fetch Lease and Application Statuses");
+		 return true;
 		 }
 		 return true;
 	 

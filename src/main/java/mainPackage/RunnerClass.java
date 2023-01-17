@@ -52,10 +52,16 @@ public class RunnerClass
 	public static HashMap<String,String> failedReaonsList= new HashMap<String,String>();
 	public static String leaseStatuses[][];
 	public static String UWStatuses[][];
+	public static boolean published;
+	public static boolean listingAgent;
 	public static void main(String[] args) throws Exception
 	{
 		//Get Pending Buildings from DataBase
-		boolean getBuildings =  GetDatafromDatabase.getBuildingsList();
+		int w=0;
+		String pendingList = AppConfig.quertyToFetchPendingBuildingsListFromETLSource;
+		boolean getBuildings =  GetDatafromDatabase.getBuildingsList(pendingList);
+		while(w<2)
+		{
 		GetDatafromDatabase.getStatusFromFactTables();
 		LocalDate dateObj = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
@@ -72,6 +78,7 @@ public class RunnerClass
 				building = pendingBuildingList[i][1].trim();
 				targetRent = pendingBuildingList[i][2];
 				targetDeposit = pendingBuildingList[i][3];
+				System.out.println(company+"   |  "+building);
 				if(CommonMethods.checkForBuildingStatusInFactTables(company, building)==true)
 			    //continue;
 				RunnerClass.runAutomation(company,building,targetRent,targetDeposit);
@@ -82,24 +89,33 @@ public class RunnerClass
 			    if(updateStatus==0)
 			    {
 			    	successBuildings.add("'"+building+"'");
+			    	if(failedBuildings.contains(building))
+			    	{
+			    		failedBuildings.remove(building);
+			    	}
 			    }
 			    else 
 			    {
 			    	failedBuildings.add("'"+building+"'");
 			    }
                 try {
-			    driver.close();}catch(Exception e) {}
+			    driver.quit();}catch(Exception e) {}
                 System.out.println("Record = "+i);
 			 }
 			}
 			catch(Exception e) {}
+		}
+		String failedList = AppConfig.failedBuildingsList;
+		getBuildings =  GetDatafromDatabase.getBuildingsList(failedList);
+		w++;
+		}
 			String success = String.join(",",successBuildings);
 			String failed = String.join(",",failedBuildings);
 			try
 			{
 				if(successBuildings.size()>0)
 				{
-				String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate() where [Building/Unit Abbreviation] in ("+success+")";
+				String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate(), Notes=null where [Building/Unit Abbreviation] in ("+success+")";
 		    	GetDatafromDatabase.updateTable(updateSuccessStatus);
 				}
 				if(failedBuildings.size()>0)
@@ -120,11 +136,12 @@ public class RunnerClass
 			}
 			catch(Exception e) {}
 			
+			//
+			
 			//Send Email with status attachment
 			if(pendingBuildingList.length>0)
 			CommonMethods.createExcelFileWithProcessedData();
 			
-		}
 	}
 
 	public static boolean runAutomation(String company,String building,String targetRent, String targetDeposit) throws Exception

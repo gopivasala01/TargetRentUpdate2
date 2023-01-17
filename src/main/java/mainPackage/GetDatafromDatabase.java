@@ -25,7 +25,7 @@ public class GetDatafromDatabase
 		    }
 	 }
 	
-	public static boolean getBuildingsList()
+	public static boolean getBuildingsList(String query)
 	{
 		try
 		{
@@ -34,7 +34,7 @@ public class GetDatafromDatabase
 		        ResultSet rs = null;
 		            //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		            con = DriverManager.getConnection(AppConfig.connectionUrl);
-		            String SQL = AppConfig.quertyToFetchPendingBuildingsListFromETLSource;
+		            String SQL = query;
 		            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		           // stmt = con.createStatement();
 		            rs = stmt.executeQuery(SQL);
