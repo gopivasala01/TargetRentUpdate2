@@ -73,6 +73,7 @@ public class RunnerClass
 			{
 			for(int i=0;i<pendingBuildingList.length;i++)
 			{
+				//String failedReason = "";
 				updateStatus=0;
 				company = pendingBuildingList[i][0];
 				building = pendingBuildingList[i][1].trim();
@@ -80,7 +81,6 @@ public class RunnerClass
 				targetDeposit = pendingBuildingList[i][3];
 				System.out.println(company+"   |  "+building);
 				if(CommonMethods.checkForBuildingStatusInFactTables(company, building)==true)
-			    //continue;
 				RunnerClass.runAutomation(company,building,targetRent,targetDeposit);
 				else
 				{
@@ -88,15 +88,19 @@ public class RunnerClass
 				}
 			    if(updateStatus==0)
 			    {
-			    	successBuildings.add("'"+building+"'");
+			    	/*successBuildings.add("'"+building+"'");
 			    	if(failedBuildings.contains(building))
 			    	{
 			    		failedBuildings.remove(building);
-			    	}
+			    	}*/
+			    	String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate(), Notes=null where [Building/Unit Abbreviation] = '"+building+"'";
+			    	GetDatafromDatabase.updateTable(updateSuccessStatus);
 			    }
 			    else 
 			    {
-			    	failedBuildings.add("'"+building+"'");
+			    	//failedBuildings.add("'"+building+"'");
+			    	String failedQuery = "update automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='"+failedReason+"' where [Building/Unit Abbreviation] ='"+building+"'";
+		    	GetDatafromDatabase.updateTable(failedQuery);
 			    }
                 try {
 			    driver.quit();}catch(Exception e) {}
@@ -109,6 +113,8 @@ public class RunnerClass
 		getBuildings =  GetDatafromDatabase.getBuildingsList(failedList);
 		w++;
 		}
+		
+		/*
 			String success = String.join(",",successBuildings);
 			String failed = String.join(",",failedBuildings);
 			try
@@ -136,8 +142,7 @@ public class RunnerClass
 			}
 			catch(Exception e) {}
 			
-			//
-			
+            */			
 			//Send Email with status attachment
 			if(pendingBuildingList.length>0)
 			CommonMethods.createExcelFileWithProcessedData();
