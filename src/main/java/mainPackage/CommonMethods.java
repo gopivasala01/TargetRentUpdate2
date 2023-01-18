@@ -141,10 +141,20 @@ public class CommonMethods
 							String lease = leaseList.get(j).getText();
 							if(lease.toLowerCase().contains(building.toLowerCase()))
 							{
+								try
+								{
 								RunnerClass.driver.findElement(By.xpath("(//*[@class='section'])["+(i+1)+"]/ul/li["+(j+1)+"]/a")).click();
 								leaseSelected = true;
 								break;
-									
+								}
+								catch(Exception e)
+								{
+									System.out.println("Building Not Found");
+									RunnerClass.failedReaonsList.put(building, "Building Not Found");
+								    RunnerClass.failedReason = "Building Not Found";
+									RunnerClass.updateStatus=1;
+									return false;
+								}
 							}
 						}
 						

@@ -60,9 +60,9 @@ public class RunnerClass
 		int w=0;
 		String pendingList = AppConfig.quertyToFetchPendingBuildingsListFromETLSource;
 		boolean getBuildings =  GetDatafromDatabase.getBuildingsList(pendingList);
-		while(w<2)
-		{
 		GetDatafromDatabase.getStatusFromFactTables();
+		while(w<3)
+		{
 		LocalDate dateObj = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         currentDate = dateObj.format(formatter);
