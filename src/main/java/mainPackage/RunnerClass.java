@@ -61,19 +61,18 @@ public class RunnerClass
 		String pendingList = AppConfig.quertyToFetchPendingBuildingsListFromETLSource;
 		boolean getBuildings =  GetDatafromDatabase.getBuildingsList(pendingList);
 		GetDatafromDatabase.getStatusFromFactTables();
-		while(w<3)
-		{
+		//while(w<3)
+		//{
 		LocalDate dateObj = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         currentDate = dateObj.format(formatter);
 		if(getBuildings==true)
 		{
-			saveButtonOnAndOff = false;
+			saveButtonOnAndOff = true;
 			try
 			{
 			for(int i=0;i<pendingBuildingList.length;i++)
 			{
-				//String failedReason = "";
 				updateStatus=0;
 				company = pendingBuildingList[i][0];
 				building = pendingBuildingList[i][1].trim();
@@ -109,10 +108,10 @@ public class RunnerClass
 			}
 			catch(Exception e) {}
 		}
-		String failedList = AppConfig.failedBuildingsList;
-		getBuildings =  GetDatafromDatabase.getBuildingsList(failedList);
-		w++;
-		}
+		//String failedList = AppConfig.failedBuildingsList;
+		//getBuildings =  GetDatafromDatabase.getBuildingsList(failedList);
+		//w++;
+		//}
 		
 		/*
 			String success = String.join(",",successBuildings);
