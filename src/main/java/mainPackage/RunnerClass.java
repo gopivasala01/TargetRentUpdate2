@@ -74,6 +74,7 @@ public class RunnerClass
 			{
 			for(int i=0;i<pendingBuildingList.length;i++)
 			{
+				failedReason =null;
 				updateStatus=0;
 				company = pendingBuildingList[i][0];
 				building = pendingBuildingList[i][1].trim();
