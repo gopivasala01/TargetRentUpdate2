@@ -56,19 +56,20 @@ public class RunnerClass
 	public static boolean listingAgent;
 	public static void main(String[] args) throws Exception
 	{
+		
 		//Get Pending Buildings from DataBase
 		int w=0;
 		String pendingList = AppConfig.quertyToFetchPendingBuildingsListFromETLSource;
 		boolean getBuildings =  GetDatafromDatabase.getBuildingsList(pendingList);
 		GetDatafromDatabase.getStatusFromFactTables();
-		//while(w<3)
-		//{
+		while(w<3)
+		{
 		LocalDate dateObj = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         currentDate = dateObj.format(formatter);
 		if(getBuildings==true)
 		{
-			saveButtonOnAndOff = true;
+			saveButtonOnAndOff = false;
 			try
 			{
 			for(int i=0;i<pendingBuildingList.length;i++)
@@ -91,14 +92,15 @@ public class RunnerClass
 			    	if(failedBuildings.contains(building))
 			    	{
 			    		failedBuildings.remove(building);
-			    	}*/
-			    	String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate(), Notes=null where [Building/Unit Abbreviation] = '"+building+"'";
+			    	}
+			    	*/
+			    	String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate(), Notes=null where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
 			    	GetDatafromDatabase.updateTable(updateSuccessStatus);
 			    }
 			    else 
 			    {
 			    	//failedBuildings.add("'"+building+"'");
-			    	String failedQuery = "update automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='"+failedReason+"' where [Building/Unit Abbreviation] ='"+building+"'";
+			    	String failedQuery = "update automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='Target Rent not Updated: Unit has Application with a status of Converted' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
 		    	GetDatafromDatabase.updateTable(failedQuery);
 			    }
                 try {
@@ -108,40 +110,12 @@ public class RunnerClass
 			}
 			catch(Exception e) {}
 		}
-		//String failedList = AppConfig.failedBuildingsList;
-		//getBuildings =  GetDatafromDatabase.getBuildingsList(failedList);
-		//w++;
-		//}
+		String failedList = AppConfig.failedBuildingsList;
+		getBuildings =  GetDatafromDatabase.getBuildingsList(failedList);
+		System.out.println((w+1)+ " Time");
+		w++;
+		}
 		
-		/*
-			String success = String.join(",",successBuildings);
-			String failed = String.join(",",failedBuildings);
-			try
-			{
-				if(successBuildings.size()>0)
-				{
-				String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate(), Notes=null where [Building/Unit Abbreviation] in ("+success+")";
-		    	GetDatafromDatabase.updateTable(updateSuccessStatus);
-				}
-				if(failedBuildings.size()>0)
-				{
-				String failedReasons = String.join(",",failedReaonsList.values());
-				String failedBuildings = String.join(",",failedReaonsList.keySet());
-				String failedBuildingsUpdateQuery = "";
-				for(int i=0;i<failedReaonsList.size();i++)
-				{
-					String buildingAbbr = failedBuildings.split(",")[i].trim();
-					String failedReason = failedReasons.split(",")[i].trim();
-					failedBuildingsUpdateQuery =failedBuildingsUpdateQuery+"\nupdate automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='"+failedReason+"' where [Building/Unit Abbreviation] ='"+buildingAbbr+"'";
-					
-				}
-		    	//String updateFailedStatus = "update automation.TargetRent Set Status ='Failed', completedOn = getdate(),Notes='"+failedReason+"' where [Building/Unit Abbreviation] in ("+failed+")";
-		    	GetDatafromDatabase.updateTable(failedBuildingsUpdateQuery);
-				}
-			}
-			catch(Exception e) {}
-			
-            */			
 			//Send Email with status attachment
 			if(pendingBuildingList.length>0)
 			CommonMethods.createExcelFileWithProcessedData();

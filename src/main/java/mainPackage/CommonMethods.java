@@ -57,7 +57,7 @@ public class CommonMethods
 		RunnerClass.actions = new Actions(RunnerClass.driver);
 		RunnerClass.js = (JavascriptExecutor)RunnerClass.driver;
 		RunnerClass.driver.manage().window().maximize();
-		RunnerClass.driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);
+		RunnerClass.driver.manage().timeouts().implicitlyWait(50,TimeUnit.SECONDS);
 		RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(50));
 		return true;
 		}
@@ -105,7 +105,7 @@ public class CommonMethods
 		}
 		catch(Exception e)
 		{}
-		Thread.sleep(5000);
+		Thread.sleep(15000);
 		System.out.println(building);
 		try
 		{
@@ -496,8 +496,8 @@ public class CommonMethods
 	
 	public static boolean checkForBuildingStatusInFactTables(String company, String buildingAbbreviation) throws Exception
 	{
-		String leaseFactQuery = "Select  ID,Status from LeaseFact_Dashboard where BuildingAbbreviation like '%"+buildingAbbreviation+"%'";// and Company ='%"+company+"%'
-		String UWFactQuery = "Select ID, Status from Underwriting_Max_Table where BuildingAbbreviation like '%"+buildingAbbreviation+"%'"; // and CompanyName ='"+company+"'
+		String leaseFactQuery = "Select  ID,Status from LeaseFact_Dashboard where BuildingAbbreviation = '"+buildingAbbreviation+"'";// and Company ='%"+company+"%'
+		String UWFactQuery = "Select ID, Status from Underwriting_Max_Table where BuildingAbbreviation = '"+buildingAbbreviation+"'"; // and CompanyName ='"+company+"'
 		boolean checkLeaseStatus =false;
 		boolean checkUWStatus =false;
 		//List<String> buildingStatusFromLeaseFact = GetDatafromDatabase.getBuildingStatus(leaseFactQuery,"Lease");
@@ -582,17 +582,20 @@ public class CommonMethods
 		 catch(Exception e) {checkUWStatus = false; }
 		 if(checkLeaseStatus == true && checkUWStatus ==true)
 		 {
-		 RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Lease with Status of "+leaseMatchedStatus+" and Application with a status of "+UWMatchedStatus);
+		 RunnerClass.failedReason = "Target Rent not Updated: Unit has Lease with Status of "+leaseMatchedStatus+" and Application with a status of "+UWMatchedStatus;
+		// RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Lease with Status of "+leaseMatchedStatus+" and Application with a status of "+UWMatchedStatus);
 		 return false;
 		 }
 		 if(checkLeaseStatus == true)
 		 {
-		 RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Lease with Status of "+leaseMatchedStatus);
+			 RunnerClass.failedReason = "Target Rent not Updated: Unit has Lease with Status of "+leaseMatchedStatus;
+		// RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Lease with Status of "+leaseMatchedStatus);
 		 return false;
 		 }
 		 if(checkUWStatus == true)
 		 {
-		 RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Application with a status of "+UWMatchedStatus);
+			 RunnerClass.failedReason ="Target Rent not Updated: Unit has Application with a status of "+UWMatchedStatus;
+		 //RunnerClass.failedReaonsList.put(buildingAbbreviation, "Target Rent not Updated: Unit has Application with a status of "+UWMatchedStatus);
 		 return false;
 		 }
 		 if(checkLeaseStatus == false && checkUWStatus ==false)
