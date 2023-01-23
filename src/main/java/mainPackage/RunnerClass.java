@@ -54,6 +54,7 @@ public class RunnerClass
 	public static String UWStatuses[][];
 	public static boolean published;
 	public static boolean listingAgent;
+	public static String listingAgentName ="";
 	public static void main(String[] args) throws Exception
 	{
 		
@@ -62,11 +63,12 @@ public class RunnerClass
 		String pendingList = AppConfig.quertyToFetchPendingBuildingsListFromETLSource;
 		boolean getBuildings =  GetDatafromDatabase.getBuildingsList(pendingList);
 		GetDatafromDatabase.getStatusFromFactTables();
-		while(w<3)
-		{
 		LocalDate dateObj = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         currentDate = dateObj.format(formatter);
+		while(w<3)
+		{
+		
 		if(getBuildings==true)
 		{
 			saveButtonOnAndOff = false;
@@ -95,13 +97,13 @@ public class RunnerClass
 			    		failedBuildings.remove(building);
 			    	}
 			    	*/
-			    	String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate(), Notes=null where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
+			    	String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate(), Notes=null, ListingAgent = '"+RunnerClass.listingAgentName+"' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
 			    	GetDatafromDatabase.updateTable(updateSuccessStatus);
 			    }
 			    else 
 			    {
 			    	//failedBuildings.add("'"+building+"'");
-			    	String failedQuery = "update automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='Target Rent not Updated: Unit has Application with a status of Converted' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
+			    	String failedQuery = "update automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='"+failedReason+"', ListingAgent = '"+RunnerClass.listingAgentName+"' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
 		    	GetDatafromDatabase.updateTable(failedQuery);
 			    }
                 try {
@@ -114,11 +116,12 @@ public class RunnerClass
 		String failedList = AppConfig.failedBuildingsList;
 		getBuildings =  GetDatafromDatabase.getBuildingsList(failedList);
 		System.out.println((w+1)+ " Time");
+		if(pendingBuildingList.length>0)
 		w++;
 		}
 		
 			//Send Email with status attachment
-			if(pendingBuildingList.length>0)
+			//if(pendingBuildingList.length>0)
 			CommonMethods.createExcelFileWithProcessedData();
 			
 	}

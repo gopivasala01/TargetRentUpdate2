@@ -212,6 +212,8 @@ public class CommonMethods
 		try
 		{
 		String listingAgent = RunnerClass.driver.findElement(Locators.listingAgent).getText();
+		RunnerClass.listingAgentName = listingAgent.split("\\|")[0].trim();
+		System.out.println("Listing Agent Name = "+RunnerClass.listingAgentName);
 		if(listingAgent.trim().toLowerCase().contains("Sovereign".toLowerCase())&&listingAgent.trim().toLowerCase().contains("MCH".toLowerCase()))
 		{
 			RunnerClass.listingAgent =false;
@@ -344,8 +346,9 @@ public class CommonMethods
 		header.createCell(1).setCellValue("Building Abbreviation");
 		header.createCell(2).setCellValue("Target Rent");
 		header.createCell(3).setCellValue("Target Deposit");
-		header.createCell(4).setCellValue("Status");
-		header.createCell(5).setCellValue("Failed Notes");
+		header.createCell(4).setCellValue("Listing Agent");
+		header.createCell(5).setCellValue("Status");
+		header.createCell(6).setCellValue("Failed Notes");
 		//int totalCurrentDayBuildings = RunnerClass.successBuildings.size()+RunnerClass.failedBuildings.size();
 		//sheet1.createRow(sheet1.getLastRowNum()+totalCurrentDayBuildings);
 		boolean getBuildings =  GetDatafromDatabase.getCompletedBuildingsList();
@@ -357,15 +360,17 @@ public class CommonMethods
 				String building = RunnerClass.completedBuildingList[i][1].trim();
 				String targetRent = RunnerClass.completedBuildingList[i][2];
 				String targetDeposit = RunnerClass.completedBuildingList[i][3];
-				String status = RunnerClass.completedBuildingList[i][4];
-				String notes = RunnerClass.completedBuildingList[i][5];
+				String listingAgent = RunnerClass.completedBuildingList[i][4];
+				String status = RunnerClass.completedBuildingList[i][5];
+				String notes = RunnerClass.completedBuildingList[i][6];
 				Row row = sheet1.createRow(1+i);
 				row.createCell(0).setCellValue(company);
 				row.createCell(1).setCellValue(building);
 				row.createCell(2).setCellValue(targetRent);
 				row.createCell(3).setCellValue(targetDeposit);
-				row.createCell(4).setCellValue(status);
-				row.createCell(5).setCellValue(notes);
+				row.createCell(4).setCellValue(listingAgent);
+				row.createCell(5).setCellValue(status);
+				row.createCell(6).setCellValue(notes);
 				
 			}
 		
@@ -496,8 +501,10 @@ public class CommonMethods
 	
 	public static boolean checkForBuildingStatusInFactTables(String company, String buildingAbbreviation) throws Exception
 	{
-		String leaseFactQuery = "Select  ID,Status from LeaseFact_Dashboard where BuildingAbbreviation = '"+buildingAbbreviation+"'";// and Company ='%"+company+"%'
-		String UWFactQuery = "Select ID, Status from Underwriting_Max_Table where BuildingAbbreviation = '"+buildingAbbreviation+"'"; // and CompanyName ='"+company+"'
+		String leaseFactQuery = "Select  Max(ID) as ID, Status from LeaseFact_Dashboard where BuildingAbbreviation ='"+buildingAbbreviation+"'  group by status";
+				//"Select  ID,Status from LeaseFact_Dashboard where BuildingAbbreviation = '"+buildingAbbreviation+"'";// and Company ='%"+company+"%'
+		String UWFactQuery = "Select  Max(ID) as ID,Status  from underwriting_fact_max where BuildingAbbreviation ='"+buildingAbbreviation+"'  group by status";
+				//"Select ID, Status from Underwriting_Max_Table where BuildingAbbreviation = '"+buildingAbbreviation+"'"; // and CompanyName ='"+company+"'
 		boolean checkLeaseStatus =false;
 		boolean checkUWStatus =false;
 		//List<String> buildingStatusFromLeaseFact = GetDatafromDatabase.getBuildingStatus(leaseFactQuery,"Lease");
@@ -527,7 +534,7 @@ public class CommonMethods
 				 {
 				 String daysDifference = "Select DATEDIFF(DAY,EndDate,Format(getdate(),'yyyy-MM-dd')) from LeaseFact_Dashboard where BuildingAbbreviation like '%"+buildingAbbreviation+"%' and ID ='"+leaseID+"'";
 				 int diff = GetDatafromDatabase.getDateDifference(daysDifference);
-				 if(diff<0)
+				 if(diff>0)
 					return true;
 				 else
 				 {
