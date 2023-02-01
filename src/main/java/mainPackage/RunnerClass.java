@@ -71,7 +71,7 @@ public class RunnerClass
 		
 		if(getBuildings==true)
 		{
-			saveButtonOnAndOff = false;
+			saveButtonOnAndOff = true;
 			try
 			{
 			for(int i=0;i<pendingBuildingList.length;i++)
