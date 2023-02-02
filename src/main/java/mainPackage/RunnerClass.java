@@ -71,11 +71,13 @@ public class RunnerClass
 		
 		if(getBuildings==true)
 		{
-			saveButtonOnAndOff = true;
+			saveButtonOnAndOff = false;
 			try
 			{
 			for(int i=0;i<pendingBuildingList.length;i++)
 			{
+				listingAgentName ="";
+				listingAgent = false;
 				failedReason =null;
 				updateStatus=0;
 				company = pendingBuildingList[i][0];
@@ -84,19 +86,16 @@ public class RunnerClass
 				targetDeposit = pendingBuildingList[i][3];
 				System.out.println(company+"   |  "+building);
 				if(CommonMethods.checkForBuildingStatusInFactTables(company, building)==true)
-				RunnerClass.runAutomation(company,building,targetRent,targetDeposit);
+					updateStatus=0;
+				//RunnerClass.runAutomation(company,building,targetRent,targetDeposit);
 				else
 				{
 					updateStatus=1;
+					RunnerClass.runAutomation(company,building,targetRent,targetDeposit);
 				}
 			    if(updateStatus==0)
 			    {
-			    	/*successBuildings.add("'"+building+"'");
-			    	if(failedBuildings.contains(building))
-			    	{
-			    		failedBuildings.remove(building);
-			    	}
-			    	*/
+			    	RunnerClass.runAutomation(company,building,targetRent,targetDeposit);
 			    	String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate(), Notes=null, ListingAgent = '"+RunnerClass.listingAgentName+"' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
 			    	GetDatafromDatabase.updateTable(updateSuccessStatus);
 			    }

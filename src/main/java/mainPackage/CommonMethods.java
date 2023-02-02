@@ -161,22 +161,50 @@ public class CommonMethods
 					}
 					if(leaseSelected==true) break;
 				}
-		if(CommonMethods.enterTargetsInBuilding(targetRent, targetDeposit)==false)
-		{
-			return false;
-		}
+					if(leaseSelected==true)
+					{
+						Thread.sleep(5000); 
+						//Check Listing Agent Type
+						try
+						{
+						String listingAgent = RunnerClass.driver.findElement(Locators.listingAgent).getText();
+						RunnerClass.listingAgentName = listingAgent.split("\\|")[0].trim();
+						System.out.println("Listing Agent Name = "+RunnerClass.listingAgentName);
+						if(listingAgent.trim().toLowerCase().contains("Sovereign".toLowerCase())&&listingAgent.trim().toLowerCase().contains("MCH".toLowerCase()))
+						{
+							RunnerClass.listingAgent =false;
+							System.out.println("Unit marketed by Sovereign");
+							//RunnerClass.failedReaonsList.put(building, "Unit marketed by Sovereign");
+						    RunnerClass.failedReason = "Unit marketed by Sovereign";
+							RunnerClass.updateStatus=1;
+							return false;
+						}
+						else RunnerClass.listingAgent =true;
+						}
+						catch(Exception e) {}
+						if(RunnerClass.listingAgent ==true)
+						if(CommonMethods.enterTargetsInBuilding(targetRent, targetDeposit)==false)
+						{
+							return false;
+						}
+						return true;
+					
+					}
+					else 
+						{
+					    System.out.println("Couldn't find Building");
+					    RunnerClass.failedReaonsList.put(building, "Building Not Found");
+					    RunnerClass.failedReason = "Building Not Found";
+						RunnerClass.updateStatus=1;
+						return false;
+						}
+				
+		
 		//RunnerClass.driver.findElement(Locators.selectSearchedLease).click();
-		Thread.sleep(5000); 
-		if(leaseSelected==true)
-		return true;
-		else 
-			{
-		    System.out.println("Couldn't find Building");
-		    RunnerClass.failedReaonsList.put(building, "Building Not Found");
-		    RunnerClass.failedReason = "Building Not Found";
-			RunnerClass.updateStatus=1;
-			return false;
-			}
+		
+		
+		
+		
 		}
 		catch(Exception e)
 		{
@@ -208,23 +236,7 @@ public class CommonMethods
 		}
 		catch(Exception e) {}
 		
-		//Check Listing Agent Type
-		try
-		{
-		String listingAgent = RunnerClass.driver.findElement(Locators.listingAgent).getText();
-		RunnerClass.listingAgentName = listingAgent.split("\\|")[0].trim();
-		System.out.println("Listing Agent Name = "+RunnerClass.listingAgentName);
-		if(listingAgent.trim().toLowerCase().contains("Sovereign".toLowerCase())&&listingAgent.trim().toLowerCase().contains("MCH".toLowerCase()))
-		{
-			RunnerClass.listingAgent =false;
-			System.out.println("Unit marketed by Sovereign");
-			//RunnerClass.failedReaonsList.put(building, "Unit marketed by Sovereign");
-		    RunnerClass.failedReason = "Unit marketed by Sovereign";
-			RunnerClass.updateStatus=1;
-			return false;
-		}
-		}
-		catch(Exception e) {}
+		
 		
 		Thread.sleep(5000);
 		//Check if the Portfolio is MCH
