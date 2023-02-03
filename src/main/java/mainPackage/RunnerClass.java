@@ -74,7 +74,7 @@ public class RunnerClass
 			saveButtonOnAndOff = false;
 			try
 			{
-			for(int i=0;i<pendingBuildingList.length;i++)
+			for(int i=0;i<1;i++)  //pendingBuildingList.length
 			{
 				listingAgentName ="";
 				listingAgent = false;
@@ -117,6 +117,7 @@ public class RunnerClass
 		System.out.println((w+1)+ " Time");
 		if(pendingBuildingList.length>0)
 		w++;
+		else break;
 		}
 		
 			//Send Email with status attachment
