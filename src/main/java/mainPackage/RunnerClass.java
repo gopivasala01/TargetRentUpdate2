@@ -74,7 +74,7 @@ public class RunnerClass
 			saveButtonOnAndOff = false;
 			try
 			{
-			for(int i=0;i<1;i++)  //pendingBuildingList.length
+			for(int i=0;i<pendingBuildingList.length;i++)  
 			{
 				listingAgentName ="";
 				listingAgent = false;
