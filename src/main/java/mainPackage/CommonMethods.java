@@ -577,7 +577,7 @@ public class CommonMethods
 			 {
 				 try
 				 {
-				 String daysDifference = "Select  DATEDIFF(DAY,CreatedDate,Format(getdate(),'yyyy-MM-dd')) from Underwriting_Max_Table where BuildingAbbreviation like '%"+buildingAbbreviation+"%' and ID ='"+uwID+"'";
+				 String daysDifference = "Select  DATEDIFF(DAY,CreatedDate,Format(getdate(),'yyyy-MM-dd')) from Underwriting_fact_Max where BuildingAbbreviation like '%"+buildingAbbreviation+"%' and ID ='"+uwID+"'";
 				 //checkStatus = true;
 				 int diff = GetDatafromDatabase.getDateDifference(daysDifference);
 				 if(diff>60)
