@@ -168,7 +168,7 @@ public class CommonMethods
 						try
 						{
 						String listingAgent = RunnerClass.driver.findElement(Locators.listingAgent).getText();
-						RunnerClass.listingAgentName = listingAgent.split("\\|")[0].trim();
+						RunnerClass.listingAgentName = listingAgent;//.split("\\|")[0].trim();
 						System.out.println("Listing Agent Name = "+RunnerClass.listingAgentName);
 						if(listingAgent.trim().toLowerCase().contains("Sovereign".toLowerCase())&&listingAgent.trim().toLowerCase().contains("MCH".toLowerCase()))
 						{
