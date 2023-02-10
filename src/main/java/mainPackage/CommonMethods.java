@@ -182,7 +182,7 @@ public class CommonMethods
 						else RunnerClass.listingAgent =true;
 						}
 						catch(Exception e) {}
-						if(RunnerClass.listingAgent ==true)
+						if(RunnerClass.listingAgent ==true&&RunnerClass.updateStatus==0)
 						if(CommonMethods.enterTargetsInBuilding(targetRent, targetDeposit)==false)
 						{
 							return false;
