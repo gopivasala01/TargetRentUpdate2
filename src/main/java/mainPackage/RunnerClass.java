@@ -96,14 +96,18 @@ public class RunnerClass
 				}
 			    if(updateStatus==0)
 			    {
+			    	String updateSuccessStatus ="";
 			    	RunnerClass.runAutomation(company,building,targetRent,targetDeposit);
-			    	String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate(), Notes=null, ListingAgent = '"+RunnerClass.listingAgentName+"' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
+			    	if(updateStatus==0)
+			    	updateSuccessStatus = "update automation.TargetRent Set Status ='Completed',StatusID=4, completedOn = getdate(), Notes=null, ListingAgent = '"+RunnerClass.listingAgentName+"' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
+			    	else 
+			    	updateSuccessStatus = "update automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='"+failedReason+"', ListingAgent = '"+RunnerClass.listingAgentName+"' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
 			    	GetDatafromDatabase.updateTable(updateSuccessStatus);
 			    }
 			    else 
 			    {
 			    	//failedBuildings.add("'"+building+"'");
-			    	String failedQuery = "update automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='"+failedReason+"', ListingAgent = '"+RunnerClass.listingAgentName+"' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
+			    	String failedQuery = "update automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='"+failedReason+"', ListingAgent = '"+RunnerClass.listingAgentName.replace("'","")+"' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
 		    	GetDatafromDatabase.updateTable(failedQuery);
 			    }
                 try {

@@ -235,9 +235,6 @@ public class CommonMethods
 		}
 		}
 		catch(Exception e) {}
-		
-		
-		
 		Thread.sleep(5000);
 		//Check if the Portfolio is MCH
 		String portfolioType="";
@@ -290,7 +287,7 @@ public class CommonMethods
 		}
 		try
 		{
-		Thread.sleep(2000);
+		Thread.sleep(5000);
 		RunnerClass.driver.findElement(Locators.editButton).click();
 		Thread.sleep(2000);
 		RunnerClass.actions.moveToElement(RunnerClass.driver.findElement(Locators.targetDeposit));
