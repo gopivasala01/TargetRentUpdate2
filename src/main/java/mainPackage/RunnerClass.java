@@ -126,7 +126,7 @@ public class RunnerClass
 		}
 		
 			//Send Email with status attachment
-			//if(pendingBuildingList.length>0)
+			if(pendingBuildingList.length>0)
 			CommonMethods.createExcelFileWithProcessedData();
 			
 	}
