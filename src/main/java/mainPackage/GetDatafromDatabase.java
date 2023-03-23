@@ -102,33 +102,36 @@ public class GetDatafromDatabase
 		            	rs.beforeFirst();
 		            }
 		            System.out.println("No of buildings with status = "+rows);
-		            RunnerClass.completedBuildingList = new String[rows][7];
+		            RunnerClass.completedBuildingList = new String[rows][8];
 		           int  i=0;
 		            while(rs.next())
 		            {
 		            	
 		            	String 	company =  (String) rs.getObject(1);
 		                String  buildingAbbreviation = (String) rs.getObject(2);
-		                String  targetRent = (String) rs.getObject(3);
-		                String  targetDeposit = (String) rs.getObject(4);
-		                String  listingAgent = (String) rs.getObject(5);
-		                String  status = (String) rs.getObject(6);
-		                String  notes = (String) rs.getObject(7);
+		                String  thirdPartyUnitID = (String) rs.getObject(3);
+		                String  targetRent = (String) rs.getObject(4);
+		                String  targetDeposit = (String) rs.getObject(5);
+		                String  listingAgent = (String) rs.getObject(6);
+		                String  status = (String) rs.getObject(7);
+		                String  notes = (String) rs.getObject(8);
 		                System.out.println(company +" | "+buildingAbbreviation+" | "+targetRent+" | "+targetDeposit+" | "+listingAgent+" | "+status+" | "+notes);
 		    				//Company
 		    				RunnerClass.completedBuildingList[i][0] = company;
 		    				//Port folio
 		    				RunnerClass.completedBuildingList[i][1] = buildingAbbreviation;
+		    				//Third Party Unit ID
+		    				RunnerClass.completedBuildingList[i][2] = thirdPartyUnitID;
 		    				//Lease Name
-		    				RunnerClass.completedBuildingList[i][2] = targetRent;
+		    				RunnerClass.completedBuildingList[i][3] = targetRent;
 		    				//Target Deposit
-		    				RunnerClass.completedBuildingList[i][3] = targetDeposit;
+		    				RunnerClass.completedBuildingList[i][4] = targetDeposit;
 		    				//Listing Agent
-		    				RunnerClass.completedBuildingList[i][4] = listingAgent;
+		    				RunnerClass.completedBuildingList[i][5] = listingAgent;
 		    				//Status
-		    				RunnerClass.completedBuildingList[i][5] = status;
+		    				RunnerClass.completedBuildingList[i][6] = status;
 		    				//Notes
-		    				RunnerClass.completedBuildingList[i][6] = notes;
+		    				RunnerClass.completedBuildingList[i][7] = notes;
 		    				i++;
 		            }	
 		           // System.out.println("Total Pending Buildings  = " +RunnerClass.pendingBuildingList.length);

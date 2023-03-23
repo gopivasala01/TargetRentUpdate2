@@ -52,6 +52,8 @@ public class CommonMethods
 		try
 		{
 		RunnerClass.options = new ChromeOptions();
+		//RunnerClass.options.setExperimentalOption("prefs", prefs);
+		RunnerClass.options.addArguments("--remote-allow-origins=*");
 		WebDriverManager.chromedriver().setup();
 		RunnerClass.driver= new ChromeDriver(RunnerClass.options);
 		RunnerClass.actions = new Actions(RunnerClass.driver);
@@ -353,11 +355,12 @@ public class CommonMethods
 		Row header = sheet1.createRow(0);
 		header.createCell(0).setCellValue("Company");
 		header.createCell(1).setCellValue("Building Abbreviation");
-		header.createCell(2).setCellValue("Target Rent");
-		header.createCell(3).setCellValue("Target Deposit");
-		header.createCell(4).setCellValue("Listing Agent");
-		header.createCell(5).setCellValue("Status");
-		header.createCell(6).setCellValue("Failed Notes");
+		header.createCell(2).setCellValue("Third Party UnitID");
+		header.createCell(3).setCellValue("Target Rent");
+		header.createCell(4).setCellValue("Target Deposit");
+		header.createCell(5).setCellValue("Listing Agent");
+		header.createCell(6).setCellValue("Status");
+		header.createCell(7).setCellValue("Failed Notes");
 		//int totalCurrentDayBuildings = RunnerClass.successBuildings.size()+RunnerClass.failedBuildings.size();
 		//sheet1.createRow(sheet1.getLastRowNum()+totalCurrentDayBuildings);
 		boolean getBuildings =  GetDatafromDatabase.getCompletedBuildingsList();
@@ -367,19 +370,21 @@ public class CommonMethods
 			{
 				String company = RunnerClass.completedBuildingList[i][0];
 				String building = RunnerClass.completedBuildingList[i][1].trim();
-				String targetRent = RunnerClass.completedBuildingList[i][2];
-				String targetDeposit = RunnerClass.completedBuildingList[i][3];
-				String listingAgent = RunnerClass.completedBuildingList[i][4];
-				String status = RunnerClass.completedBuildingList[i][5];
-				String notes = RunnerClass.completedBuildingList[i][6];
+				String thirdPartyUnitID = RunnerClass.completedBuildingList[i][2].trim();
+				String targetRent = RunnerClass.completedBuildingList[i][3];
+				String targetDeposit = RunnerClass.completedBuildingList[i][4];
+				String listingAgent = RunnerClass.completedBuildingList[i][5];
+				String status = RunnerClass.completedBuildingList[i][6];
+				String notes = RunnerClass.completedBuildingList[i][7];
 				Row row = sheet1.createRow(1+i);
 				row.createCell(0).setCellValue(company);
 				row.createCell(1).setCellValue(building);
-				row.createCell(2).setCellValue(targetRent);
-				row.createCell(3).setCellValue(targetDeposit);
-				row.createCell(4).setCellValue(listingAgent);
-				row.createCell(5).setCellValue(status);
-				row.createCell(6).setCellValue(notes);
+				row.createCell(2).setCellValue(thirdPartyUnitID);
+				row.createCell(3).setCellValue(targetRent);
+				row.createCell(4).setCellValue(targetDeposit);
+				row.createCell(5).setCellValue(listingAgent);
+				row.createCell(6).setCellValue(status);
+				row.createCell(7).setCellValue(notes);
 				
 			}
 		

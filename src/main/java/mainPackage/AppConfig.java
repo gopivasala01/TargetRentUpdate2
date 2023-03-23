@@ -14,7 +14,7 @@ public class AppConfig
    
    public static String updateSuccessStatus = "update automation.TargetRent Set Status ='Completed', ";
    public static String excelFileLocation = "E:\\Automation\\Target Rent Data";
-   public static String getBuildingsWithStatusforCurrentDay = "Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit,ListingAgent,Status,notes from automation.TargetRent where  FoRMAT(completedOn,'MM-dd-yyyy')=FoRMAT(getdate(),'MM-dd-yyyy')";
+   public static String getBuildingsWithStatusforCurrentDay = "Select Company,[Building/Unit Abbreviation],ThirdPartyUnitID,TargetRent,TargetDeposit,ListingAgent,Status,notes from automation.TargetRent where  FoRMAT(completedOn,'MM-dd-yyyy')=FoRMAT(getdate(),'MM-dd-yyyy')";
    
    //Mail credentials
    public static String fromEmail = "bireports@beetlerim.com";
