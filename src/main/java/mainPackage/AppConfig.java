@@ -6,7 +6,9 @@ public class AppConfig
    public static String username ="mds0418@gmail.com";
    public static String password ="HomeRiver1#";
    
-   public static String quertyToFetchPendingBuildingsListFromETLSource = "Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit from automation.TargetRent where Status = 'Pending'"; 
+   public static String quertyToFetchPendingBuildingsListFromETLSource = "Select distinct [building/unit abbreviation],Targetrent, Targetdeposit from automation.TargetRent where asofdate ='2023-04-10 21:01:37.967'";
+   
+		   //"Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit from automation.TargetRent where Status = 'Pending'"; 
    public static String failedBuildingsList = "Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit from automation.TargetRent where Notes in ('Target Deposit is not updated','Unable to update details','Error logging into PW','Error opening browser','Building Not Found','Issue in selecting Building','Target Rent is not updated','') and FoRMAT(completedOn,'MM-dd-yyyy')=FoRMAT(getdate(),'MM-dd-yyyy')";
    public static String connectionUrl = "jdbc:sqlserver://azrsrv001.database.windows.net;databaseName=HomeRiverDB;user=service_sql02;password=xzqcoK7T";
 
