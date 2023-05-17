@@ -55,6 +55,7 @@ public class RunnerClass
 	public static boolean published;
 	public static boolean listingAgent;
 	public static String listingAgentName ="";
+	public static String completeBuildingAbbreviation = "";
 	public static void main(String[] args) throws Exception
 	{
 		
@@ -86,6 +87,7 @@ public class RunnerClass
 				targetRent = pendingBuildingList[i][2];
 				targetDeposit = pendingBuildingList[i][3];
 				System.out.println(company+"   |  "+building);
+				completeBuildingAbbreviation = building;
 				if(CommonMethods.checkForBuildingStatusInFactTables(company, building)==true)
 					updateStatus=0;
 				//RunnerClass.runAutomation(company,building,targetRent,targetDeposit);

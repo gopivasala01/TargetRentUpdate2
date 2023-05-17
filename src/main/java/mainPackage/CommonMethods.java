@@ -93,37 +93,114 @@ public class CommonMethods
 		}
 	}
 	
+	public static void popUpHandling()
+	{
+		RunnerClass.driver.manage().timeouts().implicitlyWait(3,TimeUnit.SECONDS);
+		try
+		{
+			if(RunnerClass.driver.findElement(Locators.popUpAfterClickingLeaseName).isDisplayed())
+			{
+				RunnerClass.driver.findElement(Locators.popupClose).click();
+			}
+		}
+		catch(Exception e) {};
+		RunnerClass.driver.manage().timeouts().implicitlyWait(150,TimeUnit.SECONDS);
+	}
+	
 	public static boolean enterDetailsToBuilding(String company,String building,String targetRent, String targetDeposit) throws Exception
 	{
-		RunnerClass.driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
-		RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(5));
+		RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(10));
+		RunnerClass.driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+		//Thread.sleep(3000);
+		CommonMethods.popUpHandling();
+		RunnerClass.js.executeScript("window.scrollBy(0, -document.body.scrollHeight)");
+		RunnerClass.driver.navigate().refresh();
 		try
 		{
+	    //RunnerClass.driver.findElement(Locators.dashboardsTab).click();
 		RunnerClass.driver.findElement(Locators.searchbox).clear();
 		RunnerClass.driver.findElement(Locators.searchbox).sendKeys(building);
-		try
-		{
-		RunnerClass.wait.until(ExpectedConditions.invisibilityOf(RunnerClass.driver.findElement(Locators.searchingLoader)));
-		}
-		catch(Exception e)
-		{}
-		Thread.sleep(15000);
-		System.out.println(building);
-		try
-		{
-		if(RunnerClass.driver.findElement(Locators.noItemsFound).isDisplayed())
-		{
-			System.out.println("Building Not Found");
-			RunnerClass.failedReaonsList.put(building, "Building Not Found");
-		    RunnerClass.failedReason = "Building Not Found";
-			RunnerClass.updateStatus=1;
-			return false;
-		}
-		}
-		catch(Exception e)
-		{
-			
-		}
+		RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(300));
+			try
+			{
+			RunnerClass.wait.until(ExpectedConditions.invisibilityOf(RunnerClass.driver.findElement(Locators.searchingLoader)));
+			}
+			catch(Exception e)
+			{
+				try
+				{
+				RunnerClass.driver.manage().timeouts().implicitlyWait(200,TimeUnit.SECONDS);
+				RunnerClass.driver.navigate().refresh();
+				CommonMethods.popUpHandling();
+				RunnerClass.driver.findElement(Locators.dashboardsTab).click();
+				RunnerClass.driver.findElement(Locators.searchbox).clear();
+				RunnerClass.driver.findElement(Locators.searchbox).sendKeys(building);
+				RunnerClass.wait.until(ExpectedConditions.invisibilityOf(RunnerClass.driver.findElement(Locators.searchingLoader)));
+				}
+				catch(Exception e2) {}
+			}
+			try
+			{
+			RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+			if(RunnerClass.driver.findElement(Locators.noItemsFoundMessagewhenLeaseNotFound).isDisplayed())
+			{
+				long count = building.chars().filter(ch -> ch == '.').count();
+				if(building.chars().filter(ch -> ch == '.').count()>=2)
+				{
+					building = building.substring(building.lastIndexOf(".")+1);
+					RunnerClass.driver.manage().timeouts().implicitlyWait(200,TimeUnit.SECONDS);
+					RunnerClass.driver.navigate().refresh();
+					CommonMethods.popUpHandling();
+					RunnerClass.driver.findElement(Locators.dashboardsTab).click();
+					RunnerClass.driver.findElement(Locators.searchbox).clear();
+					RunnerClass.driver.findElement(Locators.searchbox).sendKeys(building);
+					RunnerClass.wait.until(ExpectedConditions.invisibilityOf(RunnerClass.driver.findElement(Locators.searchingLoader)));
+					try
+					{
+					RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+					if(RunnerClass.driver.findElement(Locators.noItemsFoundMessagewhenLeaseNotFound).isDisplayed())
+					{
+						System.out.println("Building Not Found");
+					    RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Found";
+						return false;
+					}
+					}
+					catch(Exception e3) {}
+				}
+				else
+				{
+				try
+				 {
+					if(building.contains("."))
+						building = building.substring(building.indexOf(".")+1,building.length());
+					else 
+					if(building.contains("_"))
+				  building = building.split("_")[1];
+					else 
+						building = RunnerClass.completeBuildingAbbreviation.substring(RunnerClass.completeBuildingAbbreviation.indexOf("(")+1,RunnerClass.completeBuildingAbbreviation.indexOf(")"));
+					
+				 if( CommonMethods.searchingBuildingWithDifferentText(building)==false)
+				 {
+					 System.out.println("Building Not Found");
+			         RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Found";
+				     return false;
+				 }
+				 }
+				 catch(Exception e)
+				 {
+			     System.out.println("Building Not Found");
+		         RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Found";
+			     return false;
+				 }
+				}
+			}
+			}
+			catch(Exception e2)
+			{
+			}
+			RunnerClass.driver.manage().timeouts().implicitlyWait(100,TimeUnit.SECONDS);
+			Thread.sleep(1000);
+			System.out.println(building);
 		// Select Lease from multiple leases
 				List<WebElement> displayedCompanies = RunnerClass.driver.findElements(Locators.searchedLeaseCompanyHeadings);
 				boolean leaseSelected = false;
@@ -627,5 +704,38 @@ public class CommonMethods
 		 return true;
 	 
 	}
+	
+	public static boolean searchingBuildingWithDifferentText(String building)
+	{
+		try
+		{
+		RunnerClass.driver.manage().timeouts().implicitlyWait(200,TimeUnit.SECONDS);
+		 RunnerClass.driver.navigate().refresh();
+		 CommonMethods.popUpHandling();
+		 RunnerClass.driver.findElement(Locators.dashboardsTab).click();
+		 RunnerClass.driver.findElement(Locators.searchbox).clear();
+		 RunnerClass.driver.findElement(Locators.searchbox).sendKeys(building);
+		 RunnerClass.wait.until(ExpectedConditions.invisibilityOf(RunnerClass.driver.findElement(Locators.searchingLoader)));
+		 try
+		 {
+		 RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+		 if(RunnerClass.driver.findElement(Locators.noItemsFoundMessagewhenLeaseNotFound).isDisplayed())
+		 { 
+			System.out.println("Building Not Found");
+		    RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Found";
+			return false;
+	     }
+		 }
+		 catch(Exception e3) {}
+		 }
+		 catch(Exception e)
+		 {
+	     System.out.println("Building Not Found");
+        RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Found";
+	     return false;
+		 }
+		return true;
+	}
+	
 
 }

@@ -29,4 +29,8 @@ public class Locators
 	
 	public static By published = By.xpath("//*[contains(text(),'Published Rental')]/following::td[1]");
     public static By listingAgent = By.xpath("//*[contains(text(),'Listing Agent [Name/Phone/Email]')]/following::td[1]");
+    
+    public static By popUpAfterClickingLeaseName = By.id("viewStickyNoteForm");
+    public static By popupClose = By.xpath("//*[@id='editStickyBtnDiv']/input[2]");
+    public static By noItemsFoundMessagewhenLeaseNotFound = By.xpath("//*[text()='No Items Found']");
 }

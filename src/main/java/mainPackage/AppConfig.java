@@ -6,7 +6,7 @@ public class AppConfig
    public static String username ="mds0418@gmail.com";
    public static String password ="HomeRiver1#";
    
-   public static String quertyToFetchPendingBuildingsListFromETLSource = "Select distinct company,[building/unit abbreviation],Targetrent, Targetdeposit from automation.TargetRent where  status ='Pending'";
+   public static String quertyToFetchPendingBuildingsListFromETLSource = "Select distinct company,[building/unit abbreviation],Targetrent, Targetdeposit from automation.TargetRent where  status ='Pending' and Notes = 'Building not found'";
    
 		   //"Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit from automation.TargetRent where Status = 'Pending'"; 
    public static String failedBuildingsList = "Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit from automation.TargetRent where Notes in ('Target Deposit is not updated','Unable to update details','Error logging into PW','Error opening browser','Building Not Found','Issue in selecting Building','Target Rent is not updated','') and FoRMAT(completedOn,'MM-dd-yyyy')=FoRMAT(getdate(),'MM-dd-yyyy')";
