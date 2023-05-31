@@ -4,7 +4,7 @@ public class AppConfig
 {
    public static String propertyWareURL ="https://app.propertyware.com/pw/login.jsp";
    public static String username ="mds0418@gmail.com";
-   public static String password ="HomeRiver1#";
+   public static String password ="KRm#V39fecMDGg#";
    
    public static String quertyToFetchPendingBuildingsListFromETLSource = "Select distinct company,[building/unit abbreviation],Targetrent, Targetdeposit from automation.TargetRent where  status ='Pending'";
    
