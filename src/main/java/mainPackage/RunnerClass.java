@@ -117,7 +117,9 @@ public class RunnerClass
                 System.out.println("Record = "+i);
 			 }
 			}
-			catch(Exception e) {}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 		String failedList = AppConfig.failedBuildingsList;
 		getBuildings =  GetDatafromDatabase.getBuildingsList(failedList);
