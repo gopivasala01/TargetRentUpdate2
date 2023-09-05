@@ -72,7 +72,7 @@ public class RunnerClass
 		
 		if(getBuildings==true)
 		{
-			saveButtonOnAndOff = true;
+			saveButtonOnAndOff = false;
 			try
 			{
 			for(int i=0;i<pendingBuildingList.length;i++)  
@@ -113,7 +113,10 @@ public class RunnerClass
 		    	GetDatafromDatabase.updateTable(failedQuery);
 			    }
                 try {
-			    driver.quit();}catch(Exception e) {}
+			    driver.quit();}catch(Exception e) 
+                {
+			    	e.printStackTrace();
+                }
                 System.out.println("Record = "+i);
 			 }
 			}
