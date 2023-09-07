@@ -54,7 +54,8 @@ public class CommonMethods
 		RunnerClass.options = new ChromeOptions();
 		//RunnerClass.options.setExperimentalOption("prefs", prefs);
 		RunnerClass.options.addArguments("--remote-allow-origins=*");
-		WebDriverManager.chromedriver().setup();
+		//WebDriverManager.chromedriver().setup();
+		WebDriverManager.chromedriver().clearDriverCache().setup();
 		RunnerClass.driver= new ChromeDriver(RunnerClass.options);
 		RunnerClass.actions = new Actions(RunnerClass.driver);
 		RunnerClass.js = (JavascriptExecutor)RunnerClass.driver;

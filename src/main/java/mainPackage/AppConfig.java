@@ -6,7 +6,7 @@ public class AppConfig
    public static String username ="mds0418@gmail.com";
    public static String password ="KRm#V39fecMDGg#";
    
-   public static String quertyToFetchPendingBuildingsListFromETLSource = "Select distinct company,[building/unit abbreviation],Targetrent, Targetdeposit from automation.TargetRent where Status ='pending' and AsOfDate=(Select MAX(Asofdate) from Automation.TargetRent)"; //Status ='pending' and
+   public static String quertyToFetchPendingBuildingsListFromETLSource = "Select distinct company,[building/unit abbreviation],Targetrent, Targetdeposit from automation.TargetRent where AsOfDate=(Select MAX(Asofdate) from Automation.TargetRent)"; //Status ='pending' and
    
 		   //"Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit from automation.TargetRent where Status = 'Pending'"; 
    public static String failedBuildingsList = "Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit from automation.TargetRent where Notes in ('Target Deposit is not updated','Unable to update details','Error logging into PW','Error opening browser','Building Not Found','Issue in selecting Building','Target Rent is not updated','') and AsOfDate=(Select MAX(Asofdate) from Automation.TargetRent)";
