@@ -25,6 +25,7 @@ public class GetDatafromDatabase
 		    }
 	 }
 	
+	
 	public static boolean getBuildingsList(String query)
 	{
 		try
@@ -81,7 +82,56 @@ public class GetDatafromDatabase
 		 return false;
 		}
 	}
-	
+	public static void getBuildingEntityID(String company, String buildingAbbrivation)
+	{
+	try
+	{
+	        Connection con = null;
+	        Statement stmt = null;
+	        ResultSet rs = null;
+	            //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+	            con = DriverManager.getConnection(AppConfig.connectionUrl);
+	            String SQL = "Select top 1 BuildingEntityID from Buildings_Dashboard where Company='" + company +"' and BuildingAbbreviation like '%"+buildingAbbrivation+"%'";
+	            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+	           // stmt = con.createStatement();
+	            rs = stmt.executeQuery(SQL);
+	            int rows =0;
+	            if (rs.last()) 
+	            {
+	            	rows = rs.getRow();
+	            	// Move to beginning
+	            	rs.beforeFirst();
+	            }
+	            System.out.println("No of Rows = "+rows);
+	            RunnerClass.BuildingEntityIDFromBuildingDashboard = new String[rows][1];
+	           int  i=0;
+	            while(rs.next())
+	            {
+	  
+	            	String 	buildingEntityID = rs.getObject(1).toString();
+	            	
+	              //stateCode
+	                try 
+	                {
+	                	if(buildingEntityID==null)
+	                		RunnerClass.BuildingEntityIDFromBuildingDashboard[i][0] = "";
+	                	else
+	                	{
+	    				RunnerClass.BuildingEntityIDFromBuildingDashboard[i][0] = buildingEntityID;
+	    				RunnerClass.buildingEntityID = RunnerClass.BuildingEntityIDFromBuildingDashboard[i][0];
+	                	}
+	                }
+	                catch(Exception e)
+	                {
+	                	RunnerClass.BuildingEntityIDFromBuildingDashboard[i][0] = "";
+	                }
+	            }
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+}
 	public static boolean getCompletedBuildingsList()
 	{
 		try

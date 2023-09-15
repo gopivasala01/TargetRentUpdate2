@@ -41,6 +41,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -60,8 +61,8 @@ public class CommonMethods
 		RunnerClass.actions = new Actions(RunnerClass.driver);
 		RunnerClass.js = (JavascriptExecutor)RunnerClass.driver;
 		RunnerClass.driver.manage().window().maximize();
-		RunnerClass.driver.manage().timeouts().implicitlyWait(50,TimeUnit.SECONDS);
-		RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(50));
+		RunnerClass.driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+		RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(10));
 		return true;
 		}
 		catch(Exception e)
@@ -114,7 +115,25 @@ public class CommonMethods
 		RunnerClass.driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
 		//Thread.sleep(3000);
 		CommonMethods.popUpHandling();
-		RunnerClass.js.executeScript("window.scrollBy(0, -document.body.scrollHeight)");
+		GetDatafromDatabase.getBuildingEntityID(RunnerClass.company, RunnerClass.building);
+		try {
+			if(getToLeasePageWithLeaseEntityID() == true) {
+				System.out.println("Building Found");   
+			}
+			else {
+				RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Available";
+				return false;
+			}
+			
+		}
+		catch(Exception e) {
+			System.out.println("Building Not Found");
+		    RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Found";
+			return false;
+		}
+	
+		
+		/*RunnerClass.js.executeScript("window.scrollBy(0, -document.body.scrollHeight)");
 		RunnerClass.driver.navigate().refresh();
 		try
 		{
@@ -243,7 +262,7 @@ public class CommonMethods
 				}
 					if(leaseSelected==true)
 					{
-						Thread.sleep(5000); 
+						Thread.sleep(5000);*/
 						//Check Listing Agent Type
 						try
 						{
@@ -270,14 +289,7 @@ public class CommonMethods
 						return true;
 					
 					}
-					else 
-						{
-					    System.out.println("Couldn't find Building");
-					    RunnerClass.failedReaonsList.put(building, "Building Not Found");
-					    RunnerClass.failedReason = "Building Not Found";
-						RunnerClass.updateStatus=1;
-						return false;
-						}
+				
 				
 		
 		//RunnerClass.driver.findElement(Locators.selectSearchedLease).click();
@@ -285,16 +297,60 @@ public class CommonMethods
 		
 		
 		
+
+	
+	public static boolean getToLeasePageWithLeaseEntityID()
+	{
+		
+		try
+		{
+			RunnerClass.navigateToBuildingThroughBuildingEntityID = true;
+			RunnerClass.driver.manage().timeouts().implicitlyWait(100,TimeUnit.SECONDS);
+	        RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(100));
+	        RunnerClass.driver.navigate().refresh();
+	        intermittentPopUp();
+	      
+	        RunnerClass.driver.findElement(Locators.marketDropdown).click();
+			/*
+			 * if(RunnerClass.company.contains("Institutional Accounts")) {
+			 * 
+			 * RunnerClass.failedReason = "Institutional Accounts"; return false; }
+			 */
+	        String marketName = "HomeRiver Group - "+RunnerClass.company.trim();
+	        Select marketDropdownList = new Select(RunnerClass.driver.findElement(Locators.marketDropdown));
+	        marketDropdownList.selectByVisibleText(marketName);
+	        Thread.sleep(3000);
+	        //}
+	        String buildingPageURL = AppConfig.buildingPageURL+RunnerClass.buildingEntityID;
+	        if(RunnerClass.buildingEntityID== null || RunnerClass.buildingEntityID == "") {
+	        	RunnerClass.failedReason = "Building Not Available";
+	        	return false;
+	        }
+	        else {
+	        	 System.out.println(buildingPageURL);
+	 	        RunnerClass.driver.navigate().to(buildingPageURL);
+	        }
+	       
+			/*
+			 * if(PropertyWare.permissionDeniedPage()==true) {
+			 * System.out.println("Wrong building Entity ID"); RunnerClass.failedReason =
+			 * "Building Not Available"; return false; }
+			 */
+	        intermittentPopUp();
+	       
+	        //boolean portfolioCheck = false;
+	        
+	        return true;
 		}
 		catch(Exception e)
 		{
-			System.out.println("Issue in selecting Building");
-			RunnerClass.failedReaonsList.put(building, "Issue in finding Building");
-			RunnerClass.failedReason = "Issue in finding Building";
-			RunnerClass.updateStatus=1;
+			RunnerClass.failedReason= "Building Not Available";
 			return false;
 		}
 	}
+
+
+	
 	public static boolean enterTargetsInBuilding(String targetRent,String targetDeposit) throws Exception
 	{
 		
@@ -315,7 +371,7 @@ public class CommonMethods
 		}
 		}
 		catch(Exception e) {}
-		Thread.sleep(5000);
+		Thread.sleep(2000);
 		//Check if the Portfolio is MCH
 		String portfolioType="";
 		try
@@ -340,7 +396,7 @@ public class CommonMethods
 		try
 		{
 			RunnerClass.driver.findElement(Locators.targetRentChangeButton).click();
-			Thread.sleep(2000);
+			RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 			try
 			{
 			RunnerClass.driver.findElement(Locators.newTargetRent).sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
@@ -354,7 +410,14 @@ public class CommonMethods
 			//RunnerClass.actions.click(RunnerClass.driver.findElement(Locators.newTargetRent)).sendKeys(Keys.END).sendKeys(Keys.SHIFT).sendKeys(Keys.HOME).sendKeys(Keys.BACK_SPACE).build().perform();
 			RunnerClass.driver.findElement(Locators.reasonForChange).sendKeys(AppConfig.reasonForChange);
 			if(RunnerClass.saveButtonOnAndOff==true)
+			{
+				
 				RunnerClass.driver.findElement(Locators.targetRentSaveButton).click();
+				Thread.sleep(1000);
+				if(RunnerClass.driver.findElement(Locators.targetRentSaveButton).isDisplayed()) {
+					RunnerClass.failedReason = "Target rent is not saved";
+				}
+			}
 			else 
 				RunnerClass.driver.findElement(Locators.targetRentCancelButton).click();
 			targetRentUpdateCheck = true;
@@ -367,9 +430,9 @@ public class CommonMethods
 		}
 		try
 		{
-		Thread.sleep(5000);
-		RunnerClass.driver.findElement(Locators.editButton).click();
 		Thread.sleep(2000);
+		RunnerClass.driver.findElement(Locators.editButton).click();
+		RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 		RunnerClass.actions.moveToElement(RunnerClass.driver.findElement(Locators.targetDeposit));
 		//RunnerClass.actions.click(RunnerClass.driver.findElement(Locators.targetDeposit)).sendKeys(Keys.END).sendKeys(Keys.SHIFT).sendKeys(Keys.HOME).sendKeys(Keys.BACK_SPACE).build().perform();
 		RunnerClass.driver.findElement(Locators.targetDeposit).sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
@@ -737,6 +800,40 @@ public class CommonMethods
 		 }
 		return true;
 	}
-	
+	public static void intermittentPopUp()
+	{
+		//Pop up after clicking lease name
+				try
+				{
+					RunnerClass.driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS);
+			        RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(1));
+			        try
+			        {
+					if(RunnerClass.driver.findElement(Locators.popUpAfterClickingLeaseName).isDisplayed())
+					{
+						RunnerClass.driver.findElement(Locators.popupClose).click();
+					}
+			        }
+			        catch(Exception e) {}
+			        try
+			        {
+					if(RunnerClass.driver.findElement(Locators.scheduledMaintanancePopUp).isDisplayed())
+					{
+						RunnerClass.driver.findElement(Locators.scheduledMaintanancePopUpOkButton).click();
+					}
+			        }
+			        catch(Exception e) {}
+			        try
+			        {
+			        if(RunnerClass.driver.findElement(Locators.scheduledMaintanancePopUpOkButton).isDisplayed())
+			        	RunnerClass.driver.findElement(Locators.scheduledMaintanancePopUpOkButton).click();
+			        }
+			        catch(Exception e) {}
+					RunnerClass.driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
+			        RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(5));
+				}
+				catch(Exception e) {}
+			
+	}
 
 }

@@ -41,6 +41,7 @@ public class RunnerClass
 	public static String building;
 	public static String targetRent;
 	public static String targetDeposit;
+	public static String buildingEntityID;
 	public static boolean saveButtonOnAndOff;
 	public static int updateStatus;
 	public static String failedReason ="";
@@ -56,6 +57,10 @@ public class RunnerClass
 	public static boolean listingAgent;
 	public static String listingAgentName ="";
 	public static String completeBuildingAbbreviation = "";
+	
+	public static String[][] BuildingEntityIDFromBuildingDashboard;
+	public static boolean navigateToBuildingThroughBuildingEntityID = false;
+	
 	public static void main(String[] args) throws Exception
 	{
 		
@@ -67,17 +72,20 @@ public class RunnerClass
 		LocalDate dateObj = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         currentDate = dateObj.format(formatter);
+        CommonMethods.openBrowser();
+        CommonMethods.loginToPropertyWare();
 		while(w<3)
 		{
 		
 		if(getBuildings==true)
 		{
-			saveButtonOnAndOff = true;
+			saveButtonOnAndOff = false;
 			try
 			{
-			for(int i=0;i<pendingBuildingList.length;i++)  
+			for(int i=0;i<pendingBuildingList.length;i++)  //pendingBuildingList.length
 			{
 				listingAgentName ="";
+				buildingEntityID ="";
 				listingAgent =false;
 				listingAgent = false;
 				failedReason =null;
@@ -88,6 +96,8 @@ public class RunnerClass
 				targetDeposit = pendingBuildingList[i][3];
 				System.out.println(company+"   |  "+building);
 				completeBuildingAbbreviation = building;
+				navigateToBuildingThroughBuildingEntityID = false;
+				
 				if(CommonMethods.checkForBuildingStatusInFactTables(company, building)==true)
 					updateStatus=0;
 				//RunnerClass.runAutomation(company,building,targetRent,targetDeposit);
@@ -112,11 +122,12 @@ public class RunnerClass
 			    	String failedQuery = "update automation.TargetRent Set Status ='Failed',StatusID=3, completedOn = getdate(),Notes='"+failedReason+"', ListingAgent = '"+RunnerClass.listingAgentName.replace("'","")+"' where SNO =(Select top 1 SNO from automation.TargetRent where [Building/Unit Abbreviation] ='"+building+"'  ORDER BY SNO DESC)";
 		    	GetDatafromDatabase.updateTable(failedQuery);
 			    }
-                try {
-			    driver.quit();}catch(Exception e) 
+               /* try {
+			    driver.quit();
+                	}catch(Exception e) 
                 {
 			    	e.printStackTrace();
-                }
+                }*/
                 System.out.println("Record = "+i);
 			 }
 			}
@@ -142,11 +153,11 @@ public class RunnerClass
 	public static boolean runAutomation(String company,String building,String targetRent, String targetDeposit) throws Exception
 	{
 		//Open Browser
-		if(CommonMethods.openBrowser()==false)
+		/*if(CommonMethods.openBrowser()==false)
 		return false;
 		//Login to PropertyWare
 		if(CommonMethods.loginToPropertyWare()==false)
-		return false;
+		return false;*/
 		//Perform Automation
 		if(CommonMethods.enterDetailsToBuilding(company, building, targetRent, targetDeposit)==false)
 			return false;
