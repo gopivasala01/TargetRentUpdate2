@@ -414,8 +414,13 @@ public class CommonMethods
 				
 				RunnerClass.driver.findElement(Locators.targetRentSaveButton).click();
 				Thread.sleep(1000);
-				if(RunnerClass.driver.findElement(Locators.targetRentSaveButton).isDisplayed()) {
-					RunnerClass.failedReason = "Target rent is not saved";
+				try {
+					if(RunnerClass.driver.findElement(Locators.targetRentSaveButton).isDisplayed()) {
+						RunnerClass.failedReason = "Target rent is not saved";
+					}
+				}
+				catch(Exception e) {
+					
 				}
 			}
 			else 
@@ -431,6 +436,7 @@ public class CommonMethods
 		try
 		{
 		Thread.sleep(2000);
+		RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 		RunnerClass.driver.findElement(Locators.editButton).click();
 		RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 		RunnerClass.actions.moveToElement(RunnerClass.driver.findElement(Locators.targetDeposit));
