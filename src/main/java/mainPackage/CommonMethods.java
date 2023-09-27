@@ -319,7 +319,8 @@ public class CommonMethods
 	        String marketName = "HomeRiver Group - "+RunnerClass.company.trim();
 	        Select marketDropdownList = new Select(RunnerClass.driver.findElement(Locators.marketDropdown));
 	        marketDropdownList.selectByVisibleText(marketName);
-	        Thread.sleep(3000);
+	        //Thread.sleep(3000);
+	        RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 	        //}
 	        String buildingPageURL = AppConfig.buildingPageURL+RunnerClass.buildingEntityID;
 	        if(RunnerClass.buildingEntityID== null || RunnerClass.buildingEntityID == "") {
