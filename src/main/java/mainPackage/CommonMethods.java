@@ -36,6 +36,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -56,6 +57,8 @@ public class CommonMethods
 		//RunnerClass.options.setExperimentalOption("prefs", prefs);
 		RunnerClass.options.addArguments("--remote-allow-origins=*");
 		//WebDriverManager.chromedriver().setup();
+		RunnerClass.options.setPageLoadStrategy(PageLoadStrategy.NORMAL); // Or PageLoadStrategy.EAGER if needed
+		RunnerClass.options.setPageLoadTimeout(Duration.ofSeconds(500));
 		WebDriverManager.chromedriver().clearDriverCache().setup();
 		RunnerClass.driver= new ChromeDriver(RunnerClass.options);
 		RunnerClass.actions = new Actions(RunnerClass.driver);
@@ -264,6 +267,7 @@ public class CommonMethods
 					{
 						Thread.sleep(5000);*/
 						//Check Listing Agent Type
+		RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 						try
 						{
 						String listingAgent = RunnerClass.driver.findElement(Locators.listingAgent).getText();
