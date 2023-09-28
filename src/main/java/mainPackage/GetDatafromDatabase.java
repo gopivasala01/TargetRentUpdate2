@@ -82,7 +82,7 @@ public class GetDatafromDatabase
 		 return false;
 		}
 	}
-	public static void getBuildingEntityID(String company, String buildingAbbrivation)
+	public static boolean getBuildingEntityID(String company, String buildingAbbrivation)
 	{
 	try
 	{
@@ -91,7 +91,7 @@ public class GetDatafromDatabase
 	        ResultSet rs = null;
 	            //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 	            con = DriverManager.getConnection(AppConfig.connectionUrl);
-	            String SQL = "Select top 1 BuildingEntityID from Buildings_Dashboard where Company='" + company +"' and BuildingAbbreviation like '%"+buildingAbbrivation+"%'";
+	            String SQL = "Select BuildingEntityID from Buildings_Dashboard where Company='" + company +"' and BuildingAbbreviation like '%"+buildingAbbrivation+"%'";
 	            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 	           // stmt = con.createStatement();
 	            rs = stmt.executeQuery(SQL);
@@ -101,6 +101,10 @@ public class GetDatafromDatabase
 	            	rows = rs.getRow();
 	            	// Move to beginning
 	            	rs.beforeFirst();
+	            }
+	            if(rs.getFetchSize()>1) {
+	            	return false;
+	            	
 	            }
 	            System.out.println("No of Rows = "+rows);
 	            RunnerClass.BuildingEntityIDFromBuildingDashboard = new String[rows][1];
@@ -131,6 +135,7 @@ public class GetDatafromDatabase
 	{
 		e.printStackTrace();
 	}
+	return true;
 }
 	public static boolean getCompletedBuildingsList()
 	{

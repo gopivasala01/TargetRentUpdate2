@@ -118,25 +118,65 @@ public class CommonMethods
 		RunnerClass.driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
 		//Thread.sleep(3000);
 		CommonMethods.popUpHandling();
-		GetDatafromDatabase.getBuildingEntityID(RunnerClass.company, RunnerClass.building);
-		try {
-			if(getToLeasePageWithLeaseEntityID() == true) {
-				System.out.println("Building Found");   
+		if(GetDatafromDatabase.getBuildingEntityID(RunnerClass.company, RunnerClass.building) == true){
+			try {
+				getToLeasePageWithLeaseEntityID();
 			}
-			else {
-				RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Available";
+			catch(Exception e) {
+				
+				System.out.println("Building Not Found");
+			    RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Found";
+				return false;
+			}
+		
+		}
+		else {
+			try {
+				getbuildingThroughAbbreviation(RunnerClass.company, RunnerClass.building);
+			}
+			catch(Exception e) {
+				
+				System.out.println("Building Not Found");
+			    RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Found";
 				return false;
 			}
 			
+			
 		}
-		catch(Exception e) {
-			System.out.println("Building Not Found");
-		    RunnerClass.failedReason =  RunnerClass.failedReason+","+ "Building Not Found";
+		
+		//Check Listing Agent Type
+		try
+		{
+		String listingAgent = RunnerClass.driver.findElement(Locators.listingAgent).getText();
+		RunnerClass.listingAgentName = listingAgent;//.split("\\|")[0].trim();
+		System.out.println("Listing Agent Name = "+RunnerClass.listingAgentName);
+		if(listingAgent.trim().toLowerCase().contains("Sovereign".toLowerCase())&&listingAgent.trim().toLowerCase().contains("MCH".toLowerCase()))
+		{
+			RunnerClass.listingAgent =false;
+			System.out.println("Unit marketed by Sovereign");
+			//RunnerClass.failedReaonsList.put(building, "Unit marketed by Sovereign");
+		    RunnerClass.failedReason = "Unit marketed by Sovereign";
+			RunnerClass.updateStatus=1;
 			return false;
 		}
-	
+		else RunnerClass.listingAgent =true;
+		}
+		catch(Exception e) {}
+		if(RunnerClass.listingAgent ==true&&RunnerClass.updateStatus==0)
+		if(CommonMethods.enterTargetsInBuilding(targetRent, targetDeposit)==false)
+		{
+			return false;
+		}
+		return true;
+						
+						
+					
+}
 		
-		/*RunnerClass.js.executeScript("window.scrollBy(0, -document.body.scrollHeight)");
+				
+	public static boolean getbuildingThroughAbbreviation(String company,String building) {
+
+		RunnerClass.js.executeScript("window.scrollBy(0, -document.body.scrollHeight)");
 		RunnerClass.driver.navigate().refresh();
 		try
 		{
@@ -265,38 +305,19 @@ public class CommonMethods
 				}
 					if(leaseSelected==true)
 					{
-						Thread.sleep(5000);*/
-						//Check Listing Agent Type
-		RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
-						try
-						{
-						String listingAgent = RunnerClass.driver.findElement(Locators.listingAgent).getText();
-						RunnerClass.listingAgentName = listingAgent;//.split("\\|")[0].trim();
-						System.out.println("Listing Agent Name = "+RunnerClass.listingAgentName);
-						if(listingAgent.trim().toLowerCase().contains("Sovereign".toLowerCase())&&listingAgent.trim().toLowerCase().contains("MCH".toLowerCase()))
-						{
-							RunnerClass.listingAgent =false;
-							System.out.println("Unit marketed by Sovereign");
-							//RunnerClass.failedReaonsList.put(building, "Unit marketed by Sovereign");
-						    RunnerClass.failedReason = "Unit marketed by Sovereign";
-							RunnerClass.updateStatus=1;
-							return false;
-						}
-						else RunnerClass.listingAgent =true;
-						}
-						catch(Exception e) {}
-						if(RunnerClass.listingAgent ==true&&RunnerClass.updateStatus==0)
-						if(CommonMethods.enterTargetsInBuilding(targetRent, targetDeposit)==false)
-						{
-							return false;
-						}
-						return true;
-					
+						//Thread.sleep(5000);
+						RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 					}
-				
-				
+	}
+					catch(Exception e) {
+						
+					}
+	
 		
-		//RunnerClass.driver.findElement(Locators.selectSearchedLease).click();
+		return true;
+		
+	}
+		
 		
 		
 		

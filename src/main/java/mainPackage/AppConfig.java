@@ -10,7 +10,7 @@ public class AppConfig
    
    public static String buildingPageURL = "https://app.propertyware.com/pw/properties/building_detail.do?entityID=";
    
-   public static String quertyToFetchPendingBuildingsListFromETLSource = "Select distinct company,[building/unit abbreviation],Targetrent, Targetdeposit from automation.TargetRent where Status in ('Completed','Failed') and AsOfDate=(Select MAX(Asofdate) from Automation.TargetRent) "; //and Notes = 'Building Not Available,Building Not Available' "; //and AsOfDate=(Select MAX(Asofdate) from Automation.TargetRent)"; //Status ='pending' and
+   public static String quertyToFetchPendingBuildingsListFromETLSource = "Select distinct company,[building/unit abbreviation],Targetrent, Targetdeposit from automation.TargetRent where Status = 'pending' and AsOfDate=(Select MAX(Asofdate) from Automation.TargetRent) "; //and Notes = 'Building Not Available,Building Not Available' "; //and AsOfDate=(Select MAX(Asofdate) from Automation.TargetRent)"; //Status ='pending' and
    
 		   //"Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit from automation.TargetRent where Status = 'Pending'"; 
    public static String failedBuildingsList = "Select Company,[Building/Unit Abbreviation],TargetRent,TargetDeposit from automation.TargetRent where Notes in ('Target Deposit is not updated','Unable to update details','Error logging into PW','Error opening browser','Building Not Found','Building Not Available','Issue in selecting Building','Target Rent is not updated','') and AsOfDate=(Select MAX(Asofdate) from Automation.TargetRent)";
@@ -26,7 +26,7 @@ public class AppConfig
    public static String fromEmail = "bireports@beetlerim.com";
    public static String fromEmailPassword = "Welcome@123";
    
-   public static String toEmail = "gopi.v@beetlerim.com";//"jwilson@homeriver.com,kespinoza@homeriver.com,mjackson@homeriver.com";//"jwilson@homeriver.com,kespinoza@homeriver.com,mjackson@homeriver.com";
+   public static String toEmail = "jwilson@homeriver.com,kespinoza@homeriver.com,mjackson@homeriver.com";//"jwilson@homeriver.com,kespinoza@homeriver.com,mjackson@homeriver.com";
    public static String CCEmail = "gopi.v@beetlerim.com,naveen.p@beetlerim.com";
    
    public static String mailSubject = "Target Rent Update for  ";
