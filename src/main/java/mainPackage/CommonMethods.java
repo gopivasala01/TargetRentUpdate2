@@ -335,17 +335,18 @@ public class CommonMethods
 	        RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(100));
 	        RunnerClass.driver.navigate().refresh();
 	        intermittentPopUp();
-	      
+	        RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 	        RunnerClass.driver.findElement(Locators.marketDropdown).click();
 			/*
 			 * if(RunnerClass.company.contains("Institutional Accounts")) {
 			 * 
 			 * RunnerClass.failedReason = "Institutional Accounts"; return false; }
 			 */
+	        RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 	        String marketName = "HomeRiver Group - "+RunnerClass.company.trim();
 	        Select marketDropdownList = new Select(RunnerClass.driver.findElement(Locators.marketDropdown));
 	        marketDropdownList.selectByVisibleText(marketName);
-	        //Thread.sleep(3000);
+	        Thread.sleep(2000);
 	        RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 	        //}
 	        String buildingPageURL = AppConfig.buildingPageURL+RunnerClass.buildingEntityID;
