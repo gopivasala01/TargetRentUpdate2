@@ -57,8 +57,8 @@ public class CommonMethods
 		//RunnerClass.options.setExperimentalOption("prefs", prefs);
 		RunnerClass.options.addArguments("--remote-allow-origins=*");
 		//WebDriverManager.chromedriver().setup();
-		RunnerClass.options.setPageLoadStrategy(PageLoadStrategy.NORMAL); // Or PageLoadStrategy.EAGER if needed
-		RunnerClass.options.setPageLoadTimeout(Duration.ofSeconds(500));
+		//RunnerClass.options.setPageLoadStrategy(PageLoadStrategy.NORMAL); // Or PageLoadStrategy.EAGER if needed
+		//RunnerClass.options.setPageLoadTimeout(Duration.ofSeconds(500));
 		WebDriverManager.chromedriver().clearDriverCache().setup();
 		RunnerClass.driver= new ChromeDriver(RunnerClass.options);
 		RunnerClass.actions = new Actions(RunnerClass.driver);
