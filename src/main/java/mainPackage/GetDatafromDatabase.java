@@ -102,7 +102,7 @@ public class GetDatafromDatabase
 	            	// Move to beginning
 	            	rs.beforeFirst();
 	            }
-	            if(rs.getFetchSize()>1) {
+	            if(rs.getRow()>1) {
 	            	return false;
 	            	
 	            }

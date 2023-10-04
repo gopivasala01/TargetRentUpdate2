@@ -147,6 +147,7 @@ public class CommonMethods
 		//Check Listing Agent Type
 		try
 		{
+			Thread.sleep(2000);
 		String listingAgent = RunnerClass.driver.findElement(Locators.listingAgent).getText();
 		RunnerClass.listingAgentName = listingAgent;//.split("\\|")[0].trim();
 		System.out.println("Listing Agent Name = "+RunnerClass.listingAgentName);
