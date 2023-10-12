@@ -147,7 +147,7 @@ public class CommonMethods
 		//Check Listing Agent Type
 		try
 		{
-			Thread.sleep(2000);
+		Thread.sleep(2000);
 		String listingAgent = RunnerClass.driver.findElement(Locators.listingAgent).getText();
 		RunnerClass.listingAgentName = listingAgent;//.split("\\|")[0].trim();
 		System.out.println("Listing Agent Name = "+RunnerClass.listingAgentName);
@@ -335,6 +335,7 @@ public class CommonMethods
 	        RunnerClass.wait = new WebDriverWait(RunnerClass.driver, Duration.ofSeconds(100));
 	        RunnerClass.driver.navigate().refresh();
 	        intermittentPopUp();
+	        Thread.sleep(2000);
 	        RunnerClass.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
 	        RunnerClass.driver.findElement(Locators.marketDropdown).click();
 			/*
